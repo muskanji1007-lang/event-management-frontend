@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-function Login({ onSignup }) {
+function Login({ onSignup, onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
 
@@ -106,9 +106,12 @@ function Login({ onSignup }) {
         </div>
 
       
-        <button className="mb-6 w-full rounded-full bg-blue-600 py-4 text-lg font-semibold transition hover:bg-blue-700">
-          Login
-        </button>
+        <button
+  onClick={onLogin}
+  className="mb-6 w-full rounded-full bg-blue-600 py-4 text-lg font-semibold transition hover:bg-blue-700"
+>
+  Login
+</button>
 
       
         <div className="mb-5 text-center text-lg text-gray-400">
