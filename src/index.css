@@ -1,1 +1,17 @@
+
 @import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f6fafc;
+}
+
+button,
+input {
+  font-family: inherit;
+}
