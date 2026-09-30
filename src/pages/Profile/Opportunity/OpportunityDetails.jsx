@@ -8,7 +8,7 @@ function OpportunityDetails() {
 
       <main className="mx-auto max-w-7xl px-5 py-5">
 
-        {/* Back */}
+
         <button
           type="button"
           className="mb-5 text-xs text-[#5F625F] hover:text-[#1F4D3F]"
@@ -18,15 +18,15 @@ function OpportunityDetails() {
 
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_310px]">
 
-          {/* ================= LEFT SIDE ================= */}
+        
           <div>
 
-            {/* Hero */}
+          
             <section className="overflow-hidden rounded-xl border border-[#DADAD4] bg-white">
 
               <div className="relative h-56 overflow-hidden bg-[#1F4D3F]">
                 <img
-                  src="/src/assets/hero.png"
+                  src="/src/assets/home page.jpeg"
                   alt="Hackathon"
                   className="h-full w-full object-cover opacity-80"
                 />
@@ -52,16 +52,14 @@ function OpportunityDetails() {
 
                   <div>
                     <p className="text-[9px] text-[#6B6F6B]">
-                      ABC University • Innovation Cell
+                    AKGEC  • Innovation Cell
                     </p>
 
                     <h1 className="mt-2 text-2xl font-semibold text-[#1E1E1C]">
                       AI Innovation Hackathon 2026
                     </h1>
 
-                    <p className="mt-1 text-[10px] text-[#6B6F6B]">
-                      ABC University • Innovation Cell
-                    </p>
+                   
                   </div>
 
                   <span className="text-[9px] text-[#6B6F6B]">
@@ -74,31 +72,10 @@ function OpportunityDetails() {
 
             </section>
 
-            {/* Registration */}
-            <section className="mt-4 rounded-xl border border-[#E6C6B9] bg-[#FFF0E9] p-4">
 
-              <div className="flex items-start gap-3">
 
-                <div className="rounded-md bg-[#D9673B] px-2 py-2 text-white">
-                  ⏱
-                </div>
 
-                <div>
-                  <h2 className="text-sm font-semibold text-[#D9673B]">
-                    Registration Closes in 4 Days
-                  </h2>
-
-                  <p className="mt-1 text-[10px] leading-4 text-[#6B6F6B]">
-                    Rolling team screening in progress. Submissions reviewed
-                    within 24 hours of team completion.
-                  </p>
-                </div>
-
-              </div>
-
-            </section>
-
-            {/* About */}
+        
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <h2 className="text-sm font-semibold">
@@ -118,7 +95,7 @@ function OpportunityDetails() {
 
             </section>
 
-            {/* Challenge Tracks */}
+          
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <div className="flex items-center justify-between">
@@ -179,7 +156,7 @@ function OpportunityDetails() {
 
             </section>
 
-            {/* Skills */}
+      
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <div className="flex items-center justify-between">
@@ -216,7 +193,7 @@ function OpportunityDetails() {
 
             </section>
 
-            {/* Format */}
+        
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <h2 className="text-sm font-semibold">
@@ -271,40 +248,9 @@ function OpportunityDetails() {
 
             </section>
 
-            {/* Organizer */}
-            <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-4">
-
-              <div className="flex items-center justify-between">
-
-                <div className="flex items-center gap-3">
-
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1F4D3F] text-[10px] font-semibold text-white">
-                    ABC
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold">
-                      ABC University Center for Urban Computing
-                    </p>
-
-                    <p className="text-[9px] text-[#6B6F6B]">
-                      In technical collaboration with Innovation Cell
-                    </p>
-                  </div>
-
-                </div>
-
-                <span className="rounded-md bg-[#F1F1ED] px-2 py-1 text-[9px] text-[#1F4D3F]">
-                  hackathon@abc.edu
-                </span>
-
-              </div>
-
-            </section>
-
           </div>
 
-          {/* ================= RIGHT SIDE ================= */}
+    
           <aside className="h-fit rounded-xl border border-[#DADAD4] bg-white p-5">
 
             <div className="flex items-center justify-between">
@@ -318,8 +264,6 @@ function OpportunityDetails() {
               </span>
 
             </div>
-
-            {/* Match */}
             <div className="mt-5 flex items-center gap-4">
 
               <div className="flex h-14 w-14 items-center justify-center rounded-full border-4 border-[#8FD3B0]">
@@ -340,8 +284,6 @@ function OpportunityDetails() {
               </div>
 
             </div>
-
-            {/* Alignment */}
             <div className="mt-5 space-y-3">
 
               <div className="flex justify-between text-[10px]">
@@ -368,7 +310,7 @@ function OpportunityDetails() {
 
             <div className="my-5 border-t border-[#EEEEEB]" />
 
-            {/* Program Snapshot */}
+          
             <h3 className="text-xs font-semibold">
               PROGRAM SNAPSHOT
             </h3>
@@ -413,7 +355,7 @@ function OpportunityDetails() {
 
             </div>
 
-            {/* Register */}
+    
             <button
               type="button"
               className="mt-6 w-full rounded-lg bg-[#1F4D3F] px-4 py-3 text-xs font-semibold text-white hover:bg-[#173B31]"
@@ -421,7 +363,7 @@ function OpportunityDetails() {
               Register Now →
             </button>
 
-            {/* Save */}
+    
             <div className="mt-3 grid grid-cols-2 gap-2">
 
               <button
