@@ -10,7 +10,7 @@ function Explore() {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text)]">
 
-      {/* Header */}
+      
       <header className="border-b border-black/10 bg-[var(--surface)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
@@ -38,7 +38,7 @@ function Explore() {
       </header>
 
 
-      {/* Main */}
+      
       <main className="mx-auto max-w-7xl px-6 py-8">
 
         <div className="mb-8">
@@ -52,7 +52,7 @@ function Explore() {
         </div>
 
 
-        {/* Search + Filter */}
+        
         <div className="mb-8 flex gap-4">
 
           <div className="flex flex-1 items-center gap-3 rounded-xl border border-black/10 bg-[var(--surface)] px-4 py-3">
@@ -72,8 +72,6 @@ function Explore() {
 
         </div>
 
-
-        {/* Categories */}
         <div className="mb-8 flex flex-wrap gap-3">
 
           <button className="rounded-full bg-[var(--primary)] px-5 py-2">
@@ -98,8 +96,6 @@ function Explore() {
 
         </div>
 
-
-        {/* Opportunity Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
           <OpportunityCard

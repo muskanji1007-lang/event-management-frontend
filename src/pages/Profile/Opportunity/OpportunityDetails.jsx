@@ -1,6 +1,10 @@
+import { useState } from "react";
+
 import Navbar from "../../../components/Navbar";
 
-function OpportunityDetails() {
+function OpportunityDetails({ onBack }) {
+
+  const [saved, setSaved] = useState(false);
   return (
     <div className="min-h-screen bg-[#F5F5F2] text-[#1E1E1C]">
 
@@ -11,6 +15,7 @@ function OpportunityDetails() {
 
         <button
           type="button"
+          onClick={onBack}
           className="mb-5 text-xs text-[#5F625F] hover:text-[#1F4D3F]"
         >
           ← Back to Explore
@@ -18,10 +23,10 @@ function OpportunityDetails() {
 
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_310px]">
 
-        
+
           <div>
 
-          
+
             <section className="overflow-hidden rounded-xl border border-[#DADAD4] bg-white">
 
               <div className="relative h-56 overflow-hidden bg-[#1F4D3F]">
@@ -52,14 +57,14 @@ function OpportunityDetails() {
 
                   <div>
                     <p className="text-[9px] text-[#6B6F6B]">
-                    AKGEC  • Innovation Cell
+                      AKGEC  • Innovation Cell
                     </p>
 
                     <h1 className="mt-2 text-2xl font-semibold text-[#1E1E1C]">
                       AI Innovation Hackathon 2026
                     </h1>
 
-                   
+
                   </div>
 
                   <span className="text-[9px] text-[#6B6F6B]">
@@ -75,7 +80,7 @@ function OpportunityDetails() {
 
 
 
-        
+
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <h2 className="text-sm font-semibold">
@@ -95,7 +100,7 @@ function OpportunityDetails() {
 
             </section>
 
-          
+
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <div className="flex items-center justify-between">
@@ -156,7 +161,7 @@ function OpportunityDetails() {
 
             </section>
 
-      
+
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <div className="flex items-center justify-between">
@@ -193,7 +198,7 @@ function OpportunityDetails() {
 
             </section>
 
-        
+
             <section className="mt-4 rounded-xl border border-[#DADAD4] bg-white p-5">
 
               <h2 className="text-sm font-semibold">
@@ -250,7 +255,7 @@ function OpportunityDetails() {
 
           </div>
 
-    
+
           <aside className="h-fit rounded-xl border border-[#DADAD4] bg-white p-5">
 
             <div className="flex items-center justify-between">
@@ -310,7 +315,7 @@ function OpportunityDetails() {
 
             <div className="my-5 border-t border-[#EEEEEB]" />
 
-          
+
             <h3 className="text-xs font-semibold">
               PROGRAM SNAPSHOT
             </h3>
@@ -355,26 +360,30 @@ function OpportunityDetails() {
 
             </div>
 
-    
+
             <button
               type="button"
+              onClick={() => alert("Registration will open soon.")}
+
               className="mt-6 w-full rounded-lg bg-[#1F4D3F] px-4 py-3 text-xs font-semibold text-white hover:bg-[#173B31]"
             >
               Register Now →
             </button>
 
-    
+
             <div className="mt-3 grid grid-cols-2 gap-2">
 
               <button
                 type="button"
+                onClick={() => setSaved(!saved)}
                 className="rounded-lg border border-[#DADAD4] px-3 py-2 text-[10px]"
               >
-                ♡ Save
+                {saved ? "♥ Saved" : "♡ Save"}
               </button>
 
               <button
                 type="button"
+                onClick={() => navigator.clipboard.writeText(window.location.href)}
                 className="rounded-lg border border-[#DADAD4] px-3 py-2 text-[10px]"
               >
                 ↗ Share Link
