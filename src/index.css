@@ -2,25 +2,35 @@
 
 :root {
   --primary: #1F4D3F;
-  --secondary: #D9673B;
-  --tertiary: #E8B84A;
-  --neutral: #1E1E1C;
+  --accent: #D9673B;
+  --highlight: #E8B84A;
 
-  --light-bg: #F5F5F2;
-  --light-card: #EEEEEB;
-  --light-text: #1E1E1C;
-  --light-muted: #6B6F6B;
+  --bg: #F5F5F2;
+  --surface: #EEEEEB;
+  --surface-soft: #F5F5F2;
 
-  --dark-bg: #0F1210;
-  --dark-card: #1B1F1C;
-  --dark-card-2: #202420;
-  --dark-text: #F1F3EF;
-  --dark-muted: #9A9F9A;
+  --text: #1E1E1C;
+  --text-muted: #6B6F6B;
 
-  --dark-primary: #8FD3B0;
-  --dark-secondary: #F0805A;
-  --dark-tertiary: #E5B869;
+  --border: #DADAD4;
 }
+
+:root.dark {
+  --primary: #8FD3B0;
+  --accent: #F0805A;
+  --highlight: #E5B869;
+
+  --bg: #0F1210;
+  --surface: #1B1F1C;
+  --surface-soft: #202420;
+
+  --text: #F1F3EF;
+  --text-muted: #9A9F9A;
+
+  --border: #303630;
+}
+
+
 
 * {
   box-sizing: border-box;
@@ -33,13 +43,18 @@ html {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-}
-body {
-  background: var(--light-bg);
-  color: var(--light-text);
+  background: var(--bg);
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.dark body {
-  background: var(--dark-bg);
-  color: var(--dark-text);
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
 }

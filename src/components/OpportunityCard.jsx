@@ -1,58 +1,79 @@
-function OpportunityCard({ 
-  type, 
-  title, 
-  description, 
-  mode, 
-  deadline,
+import {
+  Bookmark,
+  CalendarDays,
+  MapPin,
+} from "lucide-react";
+
+function OpportunityCard({
+  type,
+  title,
+  description,
+  date,
+  location,
   onViewDetails,
 }) {
+  const typeColor =
+    type === "Hackathon"
+      ? "bg-[var(--highlight)] text-[var(--text)]"
+      : type === "Internship"
+      ? "bg-[var(--accent)] text-white"
+      : "bg-[var(--primary)] text-white";
+
   return (
-    <div className="rounded-2xl border border-[#E2E2DD] bg-white p-6 transition hover:-translate-y-1 hover:shadow-md">
+    <article className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:-translate-y-1 hover:shadow-md">
 
-      <span
-        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-          type === "Hackathon"
-            ? "bg-[#E8B84A] text-[#1E1E1C]"
-            : type === "Internship"
-            ? "bg-[#D9673B] text-white"
-            : "bg-[#1F4D3F] text-white"
-        }`}
-      >
-        {type}
-      </span>
+      <div className="mb-4 flex items-start justify-between gap-3">
 
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${typeColor}`}
+        >
+          {type}
+        </span>
 
-      <h2 className="mt-4 text-xl font-semibold text-[#1E1E1C]">
+        <button
+          type="button"
+          aria-label="Save opportunity"
+          onClick={() => alert("Opportunity saved.")}
+          className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--surface-soft)]"
+        >
+          <Bookmark size={18} />
+        </button>
+
+      </div>
+
+      <h2 className="text-lg font-bold text-[var(--text)] sm:text-xl">
         {title}
       </h2>
 
-    
-      <p className="mt-2 text-sm leading-6 text-[#6B6F6B]">
+      <p className="mt-2 line-clamp-3 text-sm leading-6 text-[var(--text-muted)]">
         {description}
       </p>
 
+      <div className="mt-5 space-y-2 text-sm text-[var(--text-muted)]">
 
-      <div className="mt-5 space-y-2 text-sm text-[#6B6F6B]">
-        <p>
-          <span className="font-medium text-[#1E1E1C]">Mode:</span>{" "}
-          {mode}
-        </p>
+        <div className="flex items-center gap-2">
+          <CalendarDays size={16} />
+          <span>{date}</span>
+        </div>
 
-        <p>
-          <span className="font-medium text-[#1E1E1C]">Deadline:</span>{" "}
-          {deadline}
-        </p>
+        <div className="flex items-center gap-2">
+          <MapPin size={16} />
+          <span>{location}</span>
+        </div>
+
       </div>
 
-    
       <button
         type="button"
-          onClick={onViewDetails}
-        className="mt-6 w-full rounded-xl bg-[#1F4D3F] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#173B31]"
+        onClick={onViewDetails}
+        className="mt-auto pt-5"
       >
-        View Details
+        <span className="block w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90">
+          View Details
+        </span>
       </button>
-    </div>
+
+    </article>
   );
 }
 

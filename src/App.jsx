@@ -1,124 +1,86 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
-import FilterSidebar from "./components/FilterSidebar";
-import OpportunityCard from "./components/OpportunityCard";
-import OpportunityDetails from "./pages/Profile/Opportunity/OpportunityDetails";
+import Explore from "./pages/Explore/Explore";
+import Profile from "./pages/Profile/Profile";
+import Home from "./pages/Home/Home";
 import MyOpportunities from "./pages/Profile/MyOpportunities";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("explore");
+  const [darkMode, setDarkMode] = useState(false);
+  const [page, setPage] = useState("home");
+  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
-  if (currentPage === "details") {
-    return (
-      <OpportunityDetails
-        onBack={() => setCurrentPage("explore")}
-      />
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      darkMode
     );
-  }
+  }, [darkMode]);
 
+  const goHome = () => {
+    setPage("home");
+  };
 
-  if (currentPage === "my-opportunities") {
-    return (
-      <MyOpportunities
-        onBack={() => setCurrentPage("explore")}
-        onViewDetails={() => setCurrentPage("details")}
-      />
-    );
-  }
+  const goExplore = () => {
+    setPage("explore");
+  };
 
+  const goProfile = () => {
+    setPage("profile");
+  };
+
+  const goMyOpportunities = () => {
+    setPage("my-opportunities");
+  };
+
+  const openDetails = (opportunity) => {
+    setSelectedOpportunity(opportunity);
+
+   
+
+    console.log("Selected opportunity:", opportunity);
+  };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F2] text-[#1E1E1C]">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
 
-      
       <Navbar
-        onHome={() => setCurrentPage("explore")}
-        onExplore={() => setCurrentPage("explore")}
-        onMyOpportunities={() =>
-          setCurrentPage("my-opportunities")
-        }
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        onHome={goHome}
+        onExplore={goExplore}
+        onMyOpportunities={goMyOpportunities}
+        onProfile={goProfile}
       />
 
-      
-      <main className="px-6 py-8">
+      {page === "explore" && (
+        <Explore
+          onViewDetails={openDetails}
+        />
+      )}
 
-      
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-[#1F4D3F]">
-            Explore Opportunities
-          </h1>
+      {page === "profile" && (
+        <Profile
+          onExplore={goExplore}
+        />
+      )}
 
-          <p className="mt-2 text-[#6B6F6B]">
-            Discover opportunities that match your interests and goals.
-          </p>
-        </div>
+     {page === "home" && ( 
+  <Home
+    onExplore={goExplore}
+    onMyOpportunities={goMyOpportunities}
+    darkMode={darkMode}
+  />
+)}
+{page === "my-opportunities" && (
+  <MyOpportunities
+    onExplore={goExplore}
+        darkMode={darkMode}
+  />
+)}
 
-      
-        <div className="flex gap-8">
 
-        
-          <FilterSidebar />
-
-        
-          <section className="flex-1">
-
-            <div className="grid gap-6 md:grid-cols-2">
-
-              <OpportunityCard
-                type="Hackathon"
-                title="Innovation Hackathon"
-                description="Build innovative solutions and showcase your skills."
-                mode="Online"
-                deadline="30 Oct 2026"
-                onViewDetails={() =>
-                  setCurrentPage("details")
-                }
-              />
-
-              
-              <OpportunityCard
-                type="Internship"
-                title="Software Development Internship"
-                description="Gain practical experience by working on real projects."
-                mode="Hybrid"
-                deadline="05 Nov 2026"
-                onViewDetails={() =>
-                  setCurrentPage("details")
-                }
-              />
-
-              
-              <OpportunityCard
-                type="Workshop"
-                title="Web Development Workshop"
-                description="Learn modern web development technologies and build projects."
-                mode="Online"
-                deadline="12 Nov 2026"
-                onViewDetails={() =>
-                  setCurrentPage("details")
-                }
-              />
-
-              
-              <OpportunityCard
-                type="Competition"
-                title="Coding Competition"
-                description="Test your problem-solving and programming skills."
-                mode="Offline"
-                deadline="20 Nov 2026"
-                onViewDetails={() =>
-                  setCurrentPage("details")
-                }
-              />
-
-            </div>
-
-          </section>
-
-        </div>
-
-      </main>
     </div>
   );
 }
