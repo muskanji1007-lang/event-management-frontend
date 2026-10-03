@@ -13,181 +13,215 @@ import Login from "./pages/Auth/Login/Login";
 import Signup from "./pages/Auth/Signup/Signup";
 
 import OrganizerDashboard from "./pages/OrganizerDashboard/OrganizerDashboard";
+import CreateEvent from "./pages/OrganizerDashboard/CreateEvent";
+import MyEvents from "./pages/OrganizerDashboard/MyEvents";
+import Registrations from "./pages/OrganizerDashboard/Registrations";
+import Analytics from "./pages/OrganizerDashboard/Analytics";
+
 import AdminDashboard from "./pages/AdminDashboard";
 import RoleSelection from "./pages/RoleSelection";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authPage, setAuthPage] = useState("login");
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [authPage, setAuthPage] = useState("login");
 
-  const [selectedRole, setSelectedRole] = useState(null);
+const [selectedRole, setSelectedRole] = useState(null);
 
-  const [darkMode, setDarkMode] = useState(false);
-  const [page, setPage] = useState("home");
+const [darkMode, setDarkMode] = useState(false);
+const [page, setPage] = useState("home");
 
-  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+useEffect(() => {
+document.documentElement.classList.toggle("dark", darkMode);
+}, [darkMode]);
 
-  const goHome = () => {
-    setPage("home");
-  };
+const goHome = () => setPage("home");
+const goExplore = () => setPage("explore");
+const goProfile = () => setPage("profile");
+const goMyOpportunities = () => setPage("my-opportunities");
 
-  const goExplore = () => {
-    setPage("explore");
-  };
+const openDetails = (opportunity) => {
+setSelectedOpportunity(opportunity);
+setPage("details");
+};
 
-  const goProfile = () => {
-    setPage("profile");
-  };
+const handleLogin = () => {
+setIsLoggedIn(true);
+setSelectedRole(null);
+setPage("home");
+};
 
-  const goMyOpportunities = () => {
-    setPage("my-opportunities");
-  };
+const handleSignup = () => {
+setAuthPage("login");
+};
 
-  const openDetails = (opportunity) => {
-    setSelectedOpportunity(opportunity);
-    setPage("details");
-  };
+const changeRole = () => {
+setSelectedRole(null);
+setPage("home");
+};
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setSelectedRole(null);
-    setPage("home");
-  };
+const openOrganizerPage = (pageName) => {
+setPage(pageName);
+};
 
-  const handleSignup = () => {
-    setAuthPage("login");
-  };
+// LOGIN / SIGNUP
+if (!isLoggedIn) {
+if (authPage === "signup") {
+return (
+<Signup
+onLogin={() => setAuthPage("login")}
+onSignup={handleSignup}
+/>
+);
+}
 
-  // LOGIN / SIGNUP
-  if (!isLoggedIn) {
-    if (authPage === "signup") {
-      return (
-        <Signup
-          onLogin={() => setAuthPage("login")}
-          onSignup={handleSignup}
-        />
-      );
-    }
 
-    return (
-      <Login
-        onSignup={() => setAuthPage("signup")}
-        onLogin={handleLogin}
-      />
-    );
-  }
+return (
+  <Login
+    onSignup={() => setAuthPage("signup")}
+    onLogin={handleLogin}
+  />
+);
 
-  // ROLE SELECTION
-  if (!selectedRole) {
-    return (
-      <RoleSelection
+}
+
+// ROLE SELECTION
+if (!selectedRole) {
+return (
+<RoleSelection
+darkMode={darkMode}
+onSelect={(role) => {
+setSelectedRole(role);
+
+
+      if (role === "user") setPage("home");
+      if (role === "organizer") setPage("organizer");
+      if (role === "admin") setPage("admin");
+    }}
+  />
+);
+
+}
+
+return ( <div className="min-h-screen">
+
+  {/* USER NAVBAR */}
+  {selectedRole === "user" && (
+    <Navbar
+      darkMode={darkMode}
+      setDarkMode={setDarkMode}
+      role={selectedRole}
+      onHome={goHome}
+      onExplore={goExplore}
+      onMyOpportunities={goMyOpportunities}
+      onProfile={goProfile}
+      onChangeRole={changeRole}
+    />
+  )}
+
+  {/* USER PAGES */}
+  {selectedRole === "user" && page === "home" && (
+    <Home
+      onExplore={goExplore}
+      onMyOpportunities={goMyOpportunities}
+      darkMode={darkMode}
+    />
+  )}
+
+  {selectedRole === "user" && page === "explore" && (
+    <Explore onViewDetails={openDetails} />
+  )}
+
+  {selectedRole === "user" &&
+    page === "details" &&
+    selectedOpportunity && (
+      <OpportunityDetails
+        opportunity={selectedOpportunity}
+        onBack={goExplore}
         darkMode={darkMode}
-        onSelect={(role) => {
-          setSelectedRole(role);
-
-          if (role === "user") {
-            setPage("home");
-          }
-
-          if (role === "organizer") {
-            setPage("organizer");
-          }
-
-          if (role === "admin") {
-            setPage("admin");
-          }
-        }}
       />
-    );
-  }
+    )}
 
-  // CHANGE ROLE
-  const changeRole = () => {
-    setSelectedRole(null);
-    setPage("home");
-  };
+  {selectedRole === "user" && page === "profile" && (
+    <Profile onExplore={goExplore} />
+  )}
 
-  return (
-    <div className="min-h-screen">
+  {selectedRole === "user" && page === "my-opportunities" && (
+    <MyOpportunities
+      onExplore={goExplore}
+      darkMode={darkMode}
+    />
+  )}
 
-      <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        role={selectedRole}
+  {/* ORGANIZER PAGES */}
+  {selectedRole === "organizer" && page === "organizer" && (
+    <OrganizerDashboard
+      darkMode={darkMode}
+      setDarkMode={setDarkMode}
+      onChangeRole={changeRole}
+      onNavigate={openOrganizerPage}
+    />
+  )}
 
-        onHome={goHome}
-        onExplore={goExplore}
-        onMyOpportunities={goMyOpportunities}
-        onProfile={goProfile}
-
-        onDashboard={() => setPage(selectedRole)}
-        onMyEvents={() => alert("My Events page coming next!")}
-        onCreateEvent={() => alert("Create Event page coming next!")}
-        onRegistrations={() => alert("Registrations page coming next!")}
-        onAnalytics={() => alert("Analytics page coming next!")}
-        onManageUsers={() => alert("Manage Users page coming next!")}
-        onManageEvents={() => alert("Manage Events page coming next!")}
-        onApprovals={() => alert("Event Approvals page coming next!")}
-        onRiskDetection={() => alert("Risk Detection page coming next!")}
-
-        onChangeRole={changeRole}
-      />
-
-      
-      {selectedRole === "user" && page === "home" && (
-        <Home
-          onExplore={goExplore}
-          onMyOpportunities={goMyOpportunities}
-          darkMode={darkMode}
-        />
-      )}
-
-      {selectedRole === "user" && page === "explore" && (
-        <Explore onViewDetails={openDetails} />
-      )}
-
-      {selectedRole === "user" &&
-        page === "details" &&
-        selectedOpportunity && (
-          <OpportunityDetails
-            onBack={goExplore}
-            darkMode={darkMode}
-          />
-        )}
-
-      {selectedRole === "user" && page === "profile" && (
-        <Profile onExplore={goExplore} />
-      )}
-
-      {selectedRole === "user" &&
-        page === "my-opportunities" && (
-          <MyOpportunities
-            onExplore={goExplore}
-            darkMode={darkMode}
-          />
-        )}
-
-      {selectedRole === "organizer" && page === "organizer" && (
-        <OrganizerDashboard
-          darkMode={darkMode}
-          onChangeRole={changeRole}
-        />
-      )}
-
-    
-      {selectedRole === "admin" && page === "admin" && (
-        <AdminDashboard
-          darkMode={darkMode}
-          onChangeRole={changeRole}
-        />
-      )}
-
+  {selectedRole === "organizer" && page === "create-event" && (
+    <div className="min-h-screen bg-[#F5F5F2] p-4 sm:p-8">
+      <button
+        onClick={() => setPage("organizer")}
+        className="mb-5 rounded-lg border border-[#D9DCD6] px-4 py-2"
+      >
+        ← Back to Dashboard
+      </button>
+      <CreateEvent />
     </div>
-  );
+  )}
+
+  {selectedRole === "organizer" && page === "my-events" && (
+    <div className="min-h-screen bg-[#F5F5F2] p-4 sm:p-8">
+      <button
+        onClick={() => setPage("organizer")}
+        className="mb-5 rounded-lg border border-[#D9DCD6] px-4 py-2"
+      >
+        ← Back to Dashboard
+      </button>
+      <MyEvents />
+    </div>
+  )}
+
+  {selectedRole === "organizer" && page === "registrations" && (
+    <div className="min-h-screen bg-[#F5F5F2] p-4 sm:p-8">
+      <button
+        onClick={() => setPage("organizer")}
+        className="mb-5 rounded-lg border border-[#D9DCD6] px-4 py-2"
+      >
+        ← Back to Dashboard
+      </button>
+      <Registrations />
+    </div>
+  )}
+
+  {selectedRole === "organizer" && page === "analytics" && (
+    <div className="min-h-screen bg-[#F5F5F2] p-4 sm:p-8">
+      <button
+        onClick={() => setPage("organizer")}
+        className="mb-5 rounded-lg border border-[#D9DCD6] px-4 py-2"
+      >
+        ← Back to Dashboard
+      </button>
+      <Analytics />
+    </div>
+  )}
+
+  {/* ADMIN PAGE */}
+  {selectedRole === "admin" && page === "admin" && (
+    <AdminDashboard
+      darkMode={darkMode}
+      onChangeRole={changeRole}
+    />
+  )}
+
+</div>
+);
 }
 
 export default App;
