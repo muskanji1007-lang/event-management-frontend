@@ -1,26 +1,67 @@
+import { Bell, User, Menu, X, ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import {
-  Bell,
-  User,
-  Menu,
-  X,
-} from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 function Navbar({
   darkMode,
   setDarkMode,
+  role,
   onHome,
   onExplore,
   onMyOpportunities,
   onProfile,
+  onDashboard,
+  onMyEvents,
+  onCreateEvent,
+  onRegistrations,
+  onAnalytics,
+  onManageUsers,
+  onManageEvents,
+  onApprovals,
+  onRiskDetection,
+  onChangeRole,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNavigation = (callback) => {
-    callback();
+    if (callback) {
+      callback();
+    }
     setMobileOpen(false);
   };
+
+  const userLinks = [
+    { label: "Home", action: onHome },
+    { label: "Explore", action: onExplore },
+    { label: "My Opportunities", action: onMyOpportunities },
+  ];
+
+  const organizerLinks = [
+    { label: "Dashboard", action: onDashboard },
+    { label: "My Events", action: onMyEvents },
+    { label: "Create Event", action: onCreateEvent },
+    { label: "Registrations", action: onRegistrations },
+    { label: "Analytics", action: onAnalytics },
+  ];
+
+  const adminLinks = [
+    { label: "Dashboard", action: onDashboard },
+    { label: "Manage Users", action: onManageUsers },
+    { label: "Manage Events", action: onManageEvents },
+    { label: "Event Approvals", action: onApprovals },
+    { label: "Risk Detection", action: onRiskDetection },
+    { label: "Analytics", action: onAnalytics },
+  ];
+
+  let links = userLinks;
+
+  if (role === "organizer") {
+    links = organizerLinks;
+  }
+
+  if (role === "admin") {
+    links = adminLinks;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]">
@@ -44,34 +85,21 @@ function Navbar({
           </span>
         </button>
 
-        <div className="hidden items-center gap-6 md:flex">
-
-          <button
-            type="button"
-            onClick={onHome}
-            className="text-sm font-medium text-[var(--text)] transition hover:text-[var(--accent)]"
-          >
-            Home
-          </button>
-
-          <button
-            type="button"
-            onClick={onExplore}
-            className="text-sm font-medium text-[var(--text)] transition hover:text-[var(--accent)]"
-          >
-            Explore
-          </button>
-
-          <button
-            type="button"
-            onClick={onMyOpportunities}
-            className="text-sm font-medium text-[var(--text)] transition hover:text-[var(--accent)]"
-          >
-            My Opportunities
-          </button>
-
+        
+        <div className="hidden items-center gap-5 md:flex">
+          {links.map((link) => (
+            <button
+              key={link.label}
+              type="button"
+              onClick={link.action}
+              className="text-sm font-medium text-[var(--text)] transition hover:text-[var(--secondary)]"
+            >
+              {link.label}
+            </button>
+          ))}
         </div>
 
+      
         <div className="hidden items-center gap-2 md:flex">
 
           <ThemeToggle
@@ -81,7 +109,6 @@ function Navbar({
 
           <button
             type="button"
-            aria-label="Notifications"
             onClick={() => alert("No new notifications.")}
             className="rounded-full p-2 text-[var(--text)] transition hover:bg-[var(--surface-soft)]"
           >
@@ -94,14 +121,22 @@ function Navbar({
             className="flex items-center gap-2 rounded-full px-2 py-2 text-[var(--text)] transition hover:bg-[var(--surface-soft)]"
           >
             <User size={19} />
-
             <span className="text-sm font-medium">
               Profile
             </span>
           </button>
 
+          <button
+            type="button"
+            onClick={onChangeRole}
+            className="ml-2 flex items-center gap-1 rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface-soft)]"
+          >
+            <ArrowLeft size={16} />
+            Change Role
+          </button>
         </div>
 
+        
         <div className="flex items-center gap-2 md:hidden">
 
           <ThemeToggle
@@ -113,43 +148,28 @@ function Navbar({
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
             className="rounded-lg p-2 text-[var(--text)]"
-            aria-label="Open menu"
           >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
-
         </div>
-
       </nav>
+
 
       {mobileOpen && (
         <div className="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-4 md:hidden">
 
           <div className="flex flex-col gap-2">
 
-            <button
-              type="button"
-              onClick={() => handleNavigation(onHome)}
-              className="rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
-            >
-              Home
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavigation(onExplore)}
-              className="rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
-            >
-              Explore
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavigation(onMyOpportunities)}
-              className="rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
-            >
-              My Opportunities
-            </button>
+            {links.map((link) => (
+              <button
+                key={link.label}
+                type="button"
+                onClick={() => handleNavigation(link.action)}
+                className="rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
+              >
+                {link.label}
+              </button>
+            ))}
 
             <button
               type="button"
@@ -157,6 +177,15 @@ function Navbar({
               className="rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
             >
               Profile
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleNavigation(onChangeRole)}
+              className="flex items-center gap-2 rounded-lg px-4 py-3 text-left text-sm text-[var(--text)] hover:bg-[var(--surface-soft)]"
+            >
+              <ArrowLeft size={17} />
+              Change Role
             </button>
 
           </div>
