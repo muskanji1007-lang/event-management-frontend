@@ -1,72 +1,263 @@
+
 import { useEffect, useState } from "react";
-import { Users, ClipboardList } from "lucide-react";
+import {
+  Users,
+  ClipboardList,
+  RefreshCw,
+  CalendarDays,
+} from "lucide-react";
+
+const API_BASE_URL = "https://group-task-ccc.onrender.com/api/v1";
 
 export default function Registrations() {
-const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-useEffect(() => {
-setEvents(
-JSON.parse(localStorage.getItem("organizerEvents") || "[]")
-);
-}, []);
+  const loadEvents = async () => {
+    setLoading(true);
+    setError("");
 
-const totalRegistrations = events.reduce(
-(total, event) => total + Number(event.registrations || 0),
-0
-);
+    try {
+      const token = localStorage.getItem("accessToken");
 
-return ( <div className="space-y-6"> <div> <h1 className="text-2xl font-bold text-[#1E1E1C]">Registrations</h1> <p className="mt-1 text-sm text-[#6B6F6B]">
-Registration overview for your events. </p> </div>
+      if (!token) {
+        throw new Error("Please login first to view events.");
+      }
 
-```
-  <div className="grid gap-4 sm:grid-cols-2">
-    <div className="rounded-2xl bg-[#EEEEEB] p-5">
-      <Users className="mb-3 text-[#1F4D3F]" size={26} />
-      <p className="text-sm text-[#6B6F6B]">Total Registrations</p>
-      <h2 className="mt-1 text-3xl font-bold">{totalRegistrations}</h2>
+      const response = await fetch(
+        `${API_BASE_URL}/opportunities`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || result.success === false) {
+        throw new Error(
+          result.message || `Unable to load events (${response.status}).`
+        );
+      }
+
+      let list = [];
+
+      if (Array.isArray(result.data)) {
+        list = result.data;
+      } else if (Array.isArray(result.data?.opportunities)) {
+        list = result.data.opportunities;
+      } else if (Array.isArray(result.data?.events)) {
+        list = result.data.events;
+      } else if (Array.isArray(result.opportunities)) {
+        list = result.opportunities;
+      } else if (Array.isArray(result.events)) {
+        list = result.events;
+      }
+
+      setEvents(list);
+    } catch (err) {
+      setError(err.message || "Something went wrong while loading events.");
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const totalRegistrations = events.reduce((total, event) => {
+    return (
+      total +
+      Number(event.registrationsCount ?? event.registrations ?? 0)
+    );
+  }, 0);
+
+  const cardClass = "rounded-2xl bg-[#EEEEEB] p-5";
+  const mutedClass = "text-sm text-[#6B6F6B]";
+
+  return (
+    <div className="space-y-6">
+  
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1E1E1C]">
+            Registrations
+          </h1>
+
+          <p className="mt-1 text-sm text-[#6B6F6B]">
+            Manage your events and registration overview.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={loadEvents}
+          disabled={loading}
+          className="flex items-center gap-2 rounded-xl bg-[#1F4D3F] px-4 py-3 font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <RefreshCw size={17} />
+          {loading ? "Loading..." : "Refresh"}
+        </button>
+      </div>
+
+      {/* Summary cards */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className={cardClass}>
+          <Users className="mb-3 text-[#1F4D3F]" size={26} />
+
+          <p className={mutedClass}>Total Registrations</p>
+
+          <h2 className="mt-1 text-3xl font-bold text-[#1E1E1C]">
+            {totalRegistrations}
+          </h2>
+        </div>
+
+        <div className={cardClass}>
+          <ClipboardList className="mb-3 text-[#D9673B]" size={26} />
+
+          <p className={mutedClass}>Events Available</p>
+
+          <h2 className="mt-1 text-3xl font-bold text-[#1E1E1C]">
+            {events.length}
+          </h2>
+        </div>
+      </div>
+
+    
+      {loading && (
+        <div className={`${cardClass} text-center`}>
+          <p className="text-[#6B6F6B]">Loading events...</p>
+        </div>
+      )}
+
+      
+      {!loading && error && (
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
+          <p className="font-semibold">Unable to load events</p>
+          <p className="mt-1">{error}</p>
+
+          <button
+            type="button"
+            onClick={loadEvents}
+            className="mt-3 rounded-lg bg-[#1F4D3F] px-4 py-2 text-white"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+
+      {!loading && !error && events.length > 0 && (
+        <div className="overflow-hidden rounded-2xl border border-[#D9DCD6]">
+          <div className="border-b border-[#D9DCD6] p-5">
+            <h2 className="font-semibold text-[#1E1E1C]">
+              Event Registration Overview
+            </h2>
+
+            <p className={`mt-1 ${mutedClass}`}>
+              Events returned by the server.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[650px] text-left text-sm">
+              <thead className="bg-[#EEEEEB] text-[#1E1E1C]">
+                <tr>
+                  <th className="p-4">Event</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4">Deadline</th>
+                  <th className="p-4">Registrations</th>
+                  <th className="p-4">Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {events.map((event, index) => (
+                  <tr
+                    key={event._id || event.id || index}
+                    className="border-t border-[#D9DCD6] bg-[#F5F5F2]"
+                  >
+                    <td className="p-4">
+                      <div className="font-medium text-[#1E1E1C]">
+                        {event.title || "Untitled Event"}
+                      </div>
+
+                      <div className="mt-1 text-xs text-[#6B6F6B]">
+                        {event.organization || "Organization not provided"}
+                      </div>
+                    </td>
+
+                    <td className="p-4 text-[#1E1E1C]">
+                      {event.category || "—"}
+                    </td>
+
+                    <td className="p-4 text-[#1E1E1C]">
+                      {event.deadline
+                        ? String(event.deadline).slice(0, 10)
+                        : "—"}
+                    </td>
+
+                    <td className="p-4 text-[#1E1E1C]">
+                      {event.registrationsCount ??
+                        event.registrations ??
+                        0}
+                      {event.maxParticipants != null
+                        ? ` / ${event.maxParticipants}`
+                        : ""}
+                    </td>
+
+                    <td className="p-4">
+                      <span className="rounded-full bg-[#E8B84A]/20 px-3 py-1 text-xs font-medium text-[#1E1E1C]">
+                        {event.status || "Available"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && !error && events.length === 0 && (
+        <div className={`${cardClass} py-10 text-center`}>
+          <CalendarDays
+            size={36}
+            className="mx-auto mb-3 text-[#1F4D3F]"
+          />
+
+          <h2 className="text-lg font-semibold text-[#1E1E1C]">
+            No events found
+          </h2>
+
+          <p className="mx-auto mt-2 max-w-md text-sm text-[#6B6F6B]">
+            created event
+          </p>
+
+          <button
+            type="button"
+            onClick={loadEvents}
+            className="mt-5 rounded-xl bg-[#1F4D3F] px-5 py-3 font-medium text-white hover:opacity-90"
+          >
+            Refresh Events
+          </button>
+        </div>
+      )}
+
+      <p className="text-xs text-[#6B6F6B]">
+        Actual participant details and registration counts depend on
+        registration data provided by the backend.
+      </p>
     </div>
-
-    <div className="rounded-2xl bg-[#EEEEEB] p-5">
-      <ClipboardList className="mb-3 text-[#D9673B]" size={26} />
-      <p className="text-sm text-[#6B6F6B]">Events Created</p>
-      <h2 className="mt-1 text-3xl font-bold">{events.length}</h2>
-    </div>
-  </div>
-
-  {events.length === 0 ? (
-    <div className="rounded-2xl bg-[#EEEEEB] p-8 text-center">
-      No event registrations to display yet.
-    </div>
-  ) : (
-    <div className="overflow-x-auto rounded-2xl border border-[#D9DCD6]">
-      <table className="w-full min-w-[550px] text-left text-sm">
-        <thead className="bg-[#EEEEEB]">
-          <tr>
-            <th className="p-4">Event</th>
-            <th className="p-4">Date</th>
-            <th className="p-4">Participants</th>
-            <th className="p-4">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map((event) => (
-            <tr key={event.id} className="border-t border-[#D9DCD6]">
-              <td className="p-4 font-medium">{event.title}</td>
-              <td className="p-4">{event.date}</td>
-              <td className="p-4">
-                {event.registrations} / {event.maxParticipants}
-              </td>
-              <td className="p-4">{event.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-
-  <p className="text-xs text-[#6B6F6B]">
-    Participant-level details will appear after registration data is connected.
-  </p>
-</div>
-);
+  );
 }

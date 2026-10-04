@@ -1,3 +1,5 @@
+import MatchScore from "../../components/MatchScore";
+import CreateEvent from "./CreateEvent";
 
 import { useState } from "react";
 import {
@@ -11,7 +13,6 @@ import {
   Menu,
   X,
   Clock3,
-  CheckCircle2,
 } from "lucide-react";
 
 const green = "#1F4D3F";
@@ -67,113 +68,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
 
   function renderContent() {
     if (activePage === "Create Event") {
-      return (
-        <section
-          className="rounded-2xl p-6 sm:p-8"
-          style={{ background: card }}
-        >
-          <h2 className="mb-5 text-xl font-bold">Create New Event</h2>
-
-          <form
-            className="grid gap-4 sm:grid-cols-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert(
-                "Event form ready! Backend integration is needed to save events."
-              );
-            }}
-          >
-            <label className="grid gap-2 text-sm">
-              Event Name
-              <input
-                required
-                placeholder="Enter event name"
-                className="rounded-lg border p-3 outline-none"
-                style={{
-                  background: bg,
-                  color: text,
-                  borderColor: border,
-                }}
-              />
-            </label>
-
-            <label className="grid gap-2 text-sm">
-              Event Type
-              <select
-                required
-                defaultValue=""
-                className="rounded-lg border p-3 outline-none"
-                style={{
-                  background: bg,
-                  color: text,
-                  borderColor: border,
-                }}
-              >
-                <option value="" disabled>
-                  Select type
-                </option>
-                <option>Workshop</option>
-                <option>Hackathon</option>
-                <option>Competition</option>
-                <option>Seminar</option>
-              </select>
-            </label>
-
-            <label className="grid gap-2 text-sm">
-              Event Date
-              <input
-                required
-                type="date"
-                className="rounded-lg border p-3"
-                style={{
-                  background: bg,
-                  color: text,
-                  borderColor: border,
-                }}
-              />
-            </label>
-
-            <label className="grid gap-2 text-sm">
-              Event Mode
-              <select
-                className="rounded-lg border p-3"
-                style={{
-                  background: bg,
-                  color: text,
-                  borderColor: border,
-                }}
-              >
-                <option>Campus</option>
-                <option>Online</option>
-                <option>Hybrid</option>
-              </select>
-            </label>
-
-            <label className="grid gap-2 text-sm sm:col-span-2">
-              Description
-              <textarea
-                required
-                rows={4}
-                placeholder="Describe your event..."
-                className="rounded-lg border p-3"
-                style={{
-                  background: bg,
-                  color: text,
-                  borderColor: border,
-                }}
-              />
-            </label>
-
-            <button
-              type="submit"
-              className={`${buttonClass} sm:col-span-2`}
-              style={{ background: green, color: "#FFFFFF" }}
-            >
-              Submit Event
-            </button>
-          </form>
-        </section>
-      );
+      return <CreateEvent darkMode={darkMode} />;
     }
 
     if (activePage === "My Events") {
@@ -184,6 +79,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
         >
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-bold">My Events</h2>
+
             <button
               onClick={() => selectPage("Create Event")}
               className={buttonClass}
@@ -206,6 +102,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
                   {event.type}
                 </p>
               </div>
+
               <span
                 className="rounded-full px-3 py-1 text-sm"
                 style={{
@@ -229,6 +126,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
               </span>
             </div>
           ))}
+
           <p className="mt-4 text-xs" style={{ color: muted }}>
             Sample events for frontend preview.
           </p>
@@ -238,10 +136,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
 
     if (activePage === "Registrations") {
       return (
-        <section
-          className="rounded-2xl p-6"
-          style={{ background: card }}
-        >
+        <section className="rounded-2xl p-6" style={{ background: card }}>
           <h2 className="mb-3 text-xl font-bold">Registrations</h2>
           <p style={{ color: muted }}>
             Registration management will appear here when event registration
@@ -251,27 +146,70 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
       );
     }
 
-    if (activePage === "Analytics") {
-      return (
-        <section
-          className="rounded-2xl p-6"
-          style={{ background: card }}
-        >
-          <h2 className="mb-3 text-xl font-bold">Event Analytics</h2>
-          <p style={{ color: muted }}>
-            Event-wise registration trends and analytics can be displayed here
-            after connecting the backend or analytics API.
-          </p>
-        </section>
-      );
-    }
+   if (activePage === "Analytics") {
+  return (
+    <section className="space-y-5">
+      <div
+        className="rounded-2xl p-6"
+        style={{ background: card }}
+      >
+        <h2 className="mb-2 text-xl font-bold">
+          Event Analytics
+        </h2>
 
+        <p className="mb-5" style={{ color: muted }}>
+          Understand how well your events match user interests.
+        </p>
+
+        <MatchScore
+          score={null}
+          label="Average Match Score"
+        />
+
+        <p className="mt-3 text-sm" style={{ color: muted }}>
+          Actual ML score will appear after the ML API is connected.
+        </p>
+      </div>
+
+      <div
+        className="rounded-2xl p-6"
+        style={{ background: card }}
+      >
+        <h3 className="mb-4 text-lg font-bold">
+          Event Matching
+        </h3>
+
+        {events.map((event) => (
+          <div
+            key={event.title}
+            className="flex flex-wrap items-center justify-between gap-3 border-b py-4 last:border-0"
+            style={{ borderColor: border }}
+          >
+            <div>
+              <p className="font-semibold">{event.title}</p>
+              <p className="mt-1 text-sm" style={{ color: muted }}>
+                {event.type}
+              </p>
+            </div>
+
+            <span
+              className="rounded-full px-3 py-1 text-sm"
+              style={{
+                background: darkMode ? "#263D30" : "#DCE7DF",
+                color: accent,
+              }}
+            >
+              Awaiting ML score
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
     if (activePage === "Profile") {
       return (
-        <section
-          className="rounded-2xl p-6"
-          style={{ background: card }}
-        >
+        <section className="rounded-2xl p-6" style={{ background: card }}>
           <h2 className="mb-3 text-xl font-bold">Organizer Profile</h2>
           <p style={{ color: muted }}>
             Organizer profile details can be added here.
@@ -285,6 +223,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
         <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {stats.map((item) => {
             const Icon = item.icon;
+
             return (
               <div
                 key={item.title}
@@ -297,6 +236,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
                   </p>
                   <Icon size={21} style={{ color: item.color }} />
                 </div>
+
                 <h2
                   className="text-3xl font-bold"
                   style={{ color: item.color }}
@@ -314,6 +254,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-bold">My Events</h2>
+
             <button
               onClick={() => selectPage("My Events")}
               className="font-semibold"
@@ -359,16 +300,15 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
               </span>
             </div>
           ))}
+
           <p className="mt-3 text-xs" style={{ color: muted }}>
             Sample data — connect the backend for live event information.
           </p>
         </section>
 
-        <section
-          className="rounded-2xl p-5 sm:p-7"
-          style={{ background: card }}
-        >
+        <section className="rounded-2xl p-5 sm:p-7" style={{ background: card }}>
           <h2 className="mb-4 text-xl font-bold">Quick Actions</h2>
+
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => selectPage("Create Event")}
@@ -382,10 +322,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
             <button
               onClick={() => selectPage("Registrations")}
               className={buttonClass}
-              style={{
-                border: `1px solid ${accent}`,
-                color: accent,
-              }}
+              style={{ border: `1px solid ${accent}`, color: accent }}
             >
               <Users size={17} className="mr-1 inline" />
               Manage Registrations
@@ -397,10 +334,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
   }
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: bg, color: text }}
-    >
+    <div className="min-h-screen" style={{ background: bg, color: text }}>
       {sidebarOpen && (
         <button
           aria-label="Close sidebar overlay"
@@ -419,6 +353,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
           <h2 className="text-xl font-bold" style={{ color: accent }}>
             Opportunity Hub
           </h2>
+
           <button
             aria-label="Close menu"
             onClick={() => setSidebarOpen(false)}
@@ -428,8 +363,10 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
           </button>
         </div>
 
-        <p className="mb-4 text-xs font-semibold uppercase tracking-wider"
-          style={{ color: muted }}>
+        <p
+          className="mb-4 text-xs font-semibold uppercase tracking-wider"
+          style={{ color: muted }}
+        >
           Organizer Menu
         </p>
 
@@ -475,10 +412,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
       <main className="min-w-0 lg:ml-64">
         <header
           className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:px-7"
-          style={{
-            background: bg,
-            borderColor: border,
-          }}
+          style={{ background: bg, borderColor: border }}
         >
           <div className="flex items-center gap-3">
             <button
@@ -494,9 +428,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
               <p className="text-sm" style={{ color: muted }}>
                 Opportunity Hub / Organizer
               </p>
-              <h1 className="text-xl font-bold sm:text-2xl">
-                {activePage}
-              </h1>
+              <h1 className="text-xl font-bold sm:text-2xl">{activePage}</h1>
             </div>
           </div>
 
@@ -523,4 +455,3 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
     </div>
   );
 }
-

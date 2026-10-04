@@ -275,10 +275,7 @@ function Home({ onExplore, onMyOpportunities, darkMode }) {
 
       </section>
 
-      {/* =====================================================
-          POPULAR CATEGORIES
-      ====================================================== */}
-
+     
       <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
 
         <div className="mb-5 flex items-end justify-between">
@@ -444,10 +441,6 @@ function Home({ onExplore, onMyOpportunities, darkMode }) {
 
       </section>
 
-      {/* =====================================================
-          FEATURED OPPORTUNITIES
-      ====================================================== */}
-
       <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
 
         <div className="mb-5 flex items-end justify-between">
@@ -552,10 +545,6 @@ function Home({ onExplore, onMyOpportunities, darkMode }) {
         </div>
 
       </section>
-
-      {/* =====================================================
-          UPCOMING EVENTS + YOUR PROGRESS
-      ====================================================== */}
 
       <section className="mx-auto max-w-7xl px-5 pb-10 sm:px-6 lg:px-8">
 

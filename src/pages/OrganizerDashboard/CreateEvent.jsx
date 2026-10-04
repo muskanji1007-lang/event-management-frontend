@@ -24,31 +24,84 @@ export default function CreateEvent() {
   const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setIsError(false);
+
+    const cleanTitle = form.title.trim();
+    const cleanDescription = form.description.trim();
+    const cleanOrganization = form.organization.trim();
+    const cleanLocation =
+      form.mode === "Online" ? "Online" : form.location.trim();
+    const cleanApplicationLink = form.applicationLink.trim();
+
+    if (!cleanTitle || !cleanDescription || !cleanOrganization) {
+      setIsError(true);
+      setMessage("Please fill in all required fields.");
+      return;
+    }
+
+    if (form.deadline && form.date && form.deadline > form.date) {
+      setIsError(true);
+      setMessage("Registration deadline cannot be after the event date.");
+      return;
+    }
+    
+if (form.deadline && form.deadline < new Date().toISOString().slice(0, 10)) {
+  setIsError(true);
+  setMessage("Registration deadline cannot be in the past.");
+  return;
+}
+
+if (form.maxParticipants && Number(form.maxParticipants) < 1) {
+  setIsError(true);
+  setMessage("Maximum participants must be at least 1.");
+  return;
+}
+
+
     setIsSubmitting(true);
 
     try {
       const eventData = {
-        title: form.title.trim(),
-        description: form.description.trim(),
-        organization: form.organization.trim(),
+        title: cleanTitle,
+        description: cleanDescription,
+        organization: cleanOrganization,
         category: form.category,
-        location:
-          form.mode === "Online"
-            ? "Online"
-            : form.location.trim(),
+        date: form.date,
+        time: form.time,
+        mode: form.mode,
+        location: cleanLocation,
         deadline: form.deadline,
-        applicationLink: form.applicationLink.trim(),
+        maxParticipants: form.maxParticipants
+          ? Number(form.maxParticipants)
+          : undefined,
+        applicationLink: cleanApplicationLink,
       };
 
       const result = await createOpportunity(eventData);
+      const savedEvents = JSON.parse(
+        localStorage.getItem("organizerEvents") || "[]"
+      );
+      localStorage.setItem(
+        "organizerEvents",
+        JSON.stringify([
+          ...savedEvents,
+          {
+            id: result.opportunity._id,
+            ...eventData,
+            status: "Pending",
+            registrations: 0,
+          },
+        ])
+      );
 
+      setIsError(false);
       setMessage(result.message || "Event created successfully!");
       setForm(initialForm);
     } catch (error) {
@@ -60,7 +113,7 @@ export default function CreateEvent() {
   };
 
   const fieldClass =
-    "w-full rounded-xl border border-[#D9DCD6] bg-transparent p-3 outline-none focus:border-[#1F4D3F]";
+    "w-full rounded-xl border border-[#D9DCD6] bg-[#F5F5F2] p-3 text-[#1E1E1C] outline-none focus:border-[#1F4D3F]";
 
   return (
     <div className="space-y-6">
@@ -140,6 +193,7 @@ export default function CreateEvent() {
               name="date"
               value={form.date}
               onChange={handleChange}
+              min={new Date().toISOString().slice(0, 10)}
               required
             />
           </div>
@@ -160,7 +214,7 @@ export default function CreateEvent() {
 
           <div>
             <label className="mb-2 flex items-center gap-2 font-medium">
-              <MapPin size={17} /> Location
+              <MapPin size={17} /> Location *
             </label>
             <input
               className={fieldClass}
@@ -169,7 +223,13 @@ export default function CreateEvent() {
               onChange={handleChange}
               placeholder="Enter venue or online link"
               required={form.mode !== "Online"}
+              disabled={form.mode === "Online"}
             />
+            {form.mode === "Online" && (
+              <p className="mt-1 text-xs text-[#6B6F6B]">
+                Online events will use Online as their location.
+              </p>
+            )}
           </div>
 
           <div>
@@ -182,6 +242,7 @@ export default function CreateEvent() {
               name="deadline"
               value={form.deadline}
               onChange={handleChange}
+              max={form.date || undefined}
               required
             />
           </div>
@@ -204,22 +265,7 @@ export default function CreateEvent() {
 
           <div>
             <label className="mb-2 block font-medium">
-              Application Link *
-            </label>
-            <input
-              className={fieldClass}
-              type="url"
-              name="applicationLink"
-              value={form.applicationLink}
-              onChange={handleChange}
-              placeholder="https://example.com/apply"
-              required
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="mb-2 block font-medium">
-              Maximum Participants *
+              Maximum Participants
             </label>
             <input
               className={fieldClass}
@@ -229,7 +275,6 @@ export default function CreateEvent() {
               onChange={handleChange}
               min="1"
               placeholder="Enter participant limit"
-              required
             />
           </div>
         </div>
@@ -251,11 +296,27 @@ export default function CreateEvent() {
           />
         </div>
 
+        <div>
+          <label className="mb-2 block font-medium">
+            Application Link
+          </label>
+          <input
+            className={fieldClass}
+            type="url"
+            name="applicationLink"
+            value={form.applicationLink}
+            onChange={handleChange}
+            placeholder="https://example.com/apply"
+          />
+        </div>
+
         {message && (
           <p
             role="status"
-            className={`text-sm font-medium ${
-              isError ? "text-red-700" : "text-[#1F4D3F]"
+            className={`rounded-lg p-3 text-sm font-medium ${
+              isError
+                ? "bg-red-50 text-red-700"
+                : "bg-green-50 text-[#1F4D3F]"
             }`}
           >
             {message}
