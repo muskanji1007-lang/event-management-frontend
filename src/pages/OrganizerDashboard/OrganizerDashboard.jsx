@@ -71,142 +71,17 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
       return <CreateEvent darkMode={darkMode} />;
     }
 
-    if (activePage === "My Events") {
-      return (
-        <section
-          className="rounded-2xl p-5 sm:p-7"
-          style={{ background: card }}
-        >
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-bold">My Events</h2>
-
-            <button
-              onClick={() => selectPage("Create Event")}
-              className={buttonClass}
-              style={{ background: green, color: "#FFFFFF" }}
-            >
-              <Plus size={17} className="mr-1 inline" />
-              Create Event
-            </button>
-          </div>
-
-          {events.map((event) => (
-            <div
-              key={event.title}
-              className="flex flex-wrap items-center justify-between gap-4 border-b py-4 last:border-0"
-              style={{ borderColor: border }}
-            >
-              <div>
-                <h3 className="font-semibold">{event.title}</h3>
-                <p className="mt-1 text-sm" style={{ color: muted }}>
-                  {event.type}
-                </p>
-              </div>
-
-              <span
-                className="rounded-full px-3 py-1 text-sm"
-                style={{
-                  background:
-                    event.status === "Approved"
-                      ? darkMode
-                        ? "#263D30"
-                        : "#DCE7DF"
-                      : darkMode
-                        ? "#403721"
-                        : "#F5E8BF",
-                  color:
-                    event.status === "Approved"
-                      ? accent
-                      : darkMode
-                        ? "#E5B869"
-                        : "#735710",
-                }}
-              >
-                {event.status}
-              </span>
-            </div>
-          ))}
-
-          <p className="mt-4 text-xs" style={{ color: muted }}>
-            Sample events for frontend preview.
-          </p>
-        </section>
-      );
+        if (activePage === "My Events") {
+      return <MyEvents darkMode={darkMode} />;
     }
 
-    if (activePage === "Registrations") {
-      return (
-        <section className="rounded-2xl p-6" style={{ background: card }}>
-          <h2 className="mb-3 text-xl font-bold">Registrations</h2>
-          <p style={{ color: muted }}>
-            Registration management will appear here when event registration
-            data is connected to the backend.
-          </p>
-        </section>
-      );
+        if (activePage === "Registrations") {
+      return <Registrations darkMode={darkMode} />;
     }
 
-   if (activePage === "Analytics") {
-  return (
-    <section className="space-y-5">
-      <div
-        className="rounded-2xl p-6"
-        style={{ background: card }}
-      >
-        <h2 className="mb-2 text-xl font-bold">
-          Event Analytics
-        </h2>
-
-        <p className="mb-5" style={{ color: muted }}>
-          Understand how well your events match user interests.
-        </p>
-
-        <MatchScore
-          score={null}
-          label="Average Match Score"
-        />
-
-        <p className="mt-3 text-sm" style={{ color: muted }}>
-          Actual ML score will appear after the ML API is connected.
-        </p>
-      </div>
-
-      <div
-        className="rounded-2xl p-6"
-        style={{ background: card }}
-      >
-        <h3 className="mb-4 text-lg font-bold">
-          Event Matching
-        </h3>
-
-        {events.map((event) => (
-          <div
-            key={event.title}
-            className="flex flex-wrap items-center justify-between gap-3 border-b py-4 last:border-0"
-            style={{ borderColor: border }}
-          >
-            <div>
-              <p className="font-semibold">{event.title}</p>
-              <p className="mt-1 text-sm" style={{ color: muted }}>
-                {event.type}
-              </p>
-            </div>
-
-            <span
-              className="rounded-full px-3 py-1 text-sm"
-              style={{
-                background: darkMode ? "#263D30" : "#DCE7DF",
-                color: accent,
-              }}
-            >
-              Awaiting ML score
-            </span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+       if (activePage === "Analytics") {
+      return <Analytics darkMode={darkMode} />;
+    }
     if (activePage === "Profile") {
       return (
         <section className="rounded-2xl p-6" style={{ background: card }}>
@@ -455,3 +330,4 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
     </div>
   );
 }
+
