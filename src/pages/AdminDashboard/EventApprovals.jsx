@@ -56,7 +56,7 @@ export default function EventApprovals({ darkMode = false }) {
         )
       );
 
-      setMessage(\Event marked as \.\);
+      setMessage("Event marked as " + newStatus.toLowerCase() + ".");
       
       // Clear message after 3 seconds
       setTimeout(() => setMessage(""), 3000);
