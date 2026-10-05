@@ -18,8 +18,29 @@ export default function Registrations() {
     setError("");
     try {
       const data = await getOpportunities();
-      // API returns { success, count, opportunities: [...] }
-      setEvents(data.opportunities || []);
+      let allEvents = data.opportunities || [];
+      
+      const eventsWithCounts = await Promise.all(
+        allEvents.map(async (event) => {
+          try {
+            const token = localStorage.getItem("accessToken");
+            const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://backend-task-3-zr8a.vercel.app/api/v1";
+            const applicantRes = await fetch(baseUrl + "/opportunities/" + event._id + "/applicants", {
+              headers: { Authorization: "Bearer " + token }
+            });
+            const applicantData = await applicantRes.json();
+            
+            if (applicantData.success) {
+              return { ...event, registrationsCount: applicantData.count || 0 };
+            }
+            return { ...event, registrationsCount: 0 };
+          } catch (e) {
+            return { ...event, registrationsCount: 0 };
+          }
+        })
+      );
+      
+      setEvents(eventsWithCounts);
     } catch (err) {
       setError(err.message || "Something went wrong while loading events.");
       setEvents([]);
