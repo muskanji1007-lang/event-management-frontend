@@ -99,8 +99,18 @@ function App() {
     setAuthPage("login");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      try {
+        const { logoutUser } = await import("./services/api");
+        await logoutUser(refreshToken);
+      } catch (err) {
+        console.error("Logout API failed:", err);
+      }
+    }
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);

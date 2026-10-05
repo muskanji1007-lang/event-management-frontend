@@ -33,6 +33,9 @@ function Login({ onSignup, onLogin, onForgotPassword }) {
       }
 
       localStorage.setItem("accessToken", data.accessToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("isLoggedIn", "true");
 

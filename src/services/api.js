@@ -79,6 +79,16 @@ export const loginUser = async (loginData) => {
   return handleResponse(response, "Login failed");
 };
 
+/** 1.2.1 Log out a user */
+export const logoutUser = async (refreshToken) => {
+  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
+  });
+  return handleResponse(response, "Logout failed");
+};
+
 /** 1.3 Send OTP to email (registration / verification) */
 export const sendOTP = async (email) => {
   const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {

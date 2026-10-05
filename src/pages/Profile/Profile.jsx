@@ -81,8 +81,18 @@ function Profile({ onExplore }) {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      try {
+        const { logoutUser } = await import("../../services/api");
+        await logoutUser(refreshToken);
+      } catch (e) {
+        console.error(e);
+      }
+    }
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
     window.location.reload();
