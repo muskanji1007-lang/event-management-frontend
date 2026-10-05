@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { CalendarDays, Users, RefreshCw, Loader2 } from "lucide-react";
 import { getOpportunities, deleteOpportunity } from "../../services/api";
