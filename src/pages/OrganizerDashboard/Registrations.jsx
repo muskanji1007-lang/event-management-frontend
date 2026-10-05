@@ -7,7 +7,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 
-const API_BASE_URL = "https://group-task-ccc.onrender.com/api/v1";
+const API_BASE_URL = "https://backend-task-3-zr8a.vercel.app";
 
 export default function Registrations() {
   const [events, setEvents] = useState([]);
