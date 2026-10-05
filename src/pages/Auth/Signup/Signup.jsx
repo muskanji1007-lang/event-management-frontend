@@ -6,7 +6,6 @@ function Signup({ onLogin, onSignup }) {
 const [name, setName] = useState("");
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
-const [role, setRole] = useState("USER");
 const [error, setError] = useState("");
 const [loading, setLoading] = useState(false);
 
@@ -40,7 +39,6 @@ try {
     name: cleanName,
     email: cleanEmail,
     password,
-    role,
   });
 
   if (data.success) {
@@ -174,24 +172,6 @@ return ( <main className="auth-page min-h-screen bg-[#F5F5F2] text-[#1E1E1C] dar
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="signup-role"
-              className="mb-2 block text-sm font-medium"
-            >
-              I am signing up as
-            </label>
-
-            <select
-              id="signup-role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full rounded-lg border border-[#DADAD4] bg-[#F5F5F2] px-4 py-3 text-sm outline-none focus:border-[#1F4D3F] dark:border-[#303630] dark:bg-[#202420] dark:focus:border-[#8FD3B0]"
-            >
-              <option value="USER">Student / User</option>
-              <option value="ORGANIZER">Organizer</option>
-            </select>
-          </div>
 
           <div>
             <label
