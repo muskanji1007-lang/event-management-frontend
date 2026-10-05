@@ -171,7 +171,7 @@ function Login({ onSignup, onLogin, onForgotPassword }) {
               onClick={onForgotPassword}
               className="mt-4 w-full text-center text-sm font-semibold text-[#1F4D3F] hover:underline dark:text-[#8FD3B0]"
             >
-              Verify Email / OTP
+              Forgot Password?
             </button>
 
             <p className="mt-6 text-center text-sm text-[#6B6F6B] dark:text-[#9A9F9A]">
