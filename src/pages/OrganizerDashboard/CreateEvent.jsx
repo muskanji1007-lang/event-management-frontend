@@ -52,11 +52,7 @@ export default function CreateEvent() {
       return;
     }
     
-if (form.deadline && form.deadline < new Date().toISOString().slice(0, 10)) {
-  setIsError(true);
-  setMessage("Registration deadline cannot be in the past.");
-  return;
-}
+
 
 if (form.maxParticipants && Number(form.maxParticipants) < 1) {
   setIsError(true);
@@ -193,7 +189,7 @@ if (form.maxParticipants && Number(form.maxParticipants) < 1) {
               name="date"
               value={form.date}
               onChange={handleChange}
-              min={new Date().toISOString().slice(0, 10)}
+              
               required
             />
           </div>
@@ -334,3 +330,6 @@ if (form.maxParticipants && Number(form.maxParticipants) < 1) {
     </div>
   );
 }
+
+
+
