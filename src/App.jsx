@@ -20,6 +20,7 @@ import Registrations from "./pages/OrganizerDashboard/Registrations";
 import Analytics from "./pages/OrganizerDashboard/Analytics";
 
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import RoleSelection from "./pages/RoleSelection";
 
 /**
  * Derive the role from the stored user object.
@@ -37,7 +38,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authPage, setAuthPage] = useState("login");
 
-  // Role is auto-detected from the JWT user object — no manual selection needed
+  // If selectedRole is null, we show RoleSelection
   const [selectedRole, setSelectedRole] = useState(null);
 
   const [darkMode, setDarkMode] = useState(false);
@@ -49,18 +50,21 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("user");
+    const storedRole = localStorage.getItem("selectedRole");
+    
     if (token && storedUser) {
       try {
-        const user = JSON.parse(storedUser);
         setIsLoggedIn(true);
-        setSelectedRole(getRoleFromUser(user));
-        setPage(
-          getRoleFromUser(user) === "organizer"
-            ? "organizer"
-            : getRoleFromUser(user) === "admin"
-            ? "admin"
-            : "home"
-        );
+        if (storedRole) {
+          setSelectedRole(storedRole);
+          setPage(
+            storedRole === "organizer"
+              ? "organizer"
+              : storedRole === "admin"
+              ? "admin"
+              : "home"
+          );
+        }
       } catch {
         // Corrupt storage — clear it
         localStorage.clear();
@@ -82,16 +86,18 @@ function App() {
     setPage("details");
   };
 
-  /**
-   * Called by Login after a successful login response.
-   * Receives the user object returned from the API.
-   */
   const handleLogin = (user) => {
-    const role = getRoleFromUser(user);
     setIsLoggedIn(true);
-    setSelectedRole(role);
+    // Don't auto-set role because backend ignores the signup role and defaults everyone to USER.
+    // Instead, leave selectedRole as null to trigger RoleSelection.
+    setSelectedRole(null); 
+  };
+
+  const handleRoleSelect = (roleId) => {
+    setSelectedRole(roleId);
+    localStorage.setItem("selectedRole", roleId);
     setPage(
-      role === "organizer" ? "organizer" : role === "admin" ? "admin" : "home"
+      roleId === "organizer" ? "organizer" : roleId === "admin" ? "admin" : "home"
     );
   };
 
@@ -112,6 +118,7 @@ function App() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("selectedRole");
     localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
     setSelectedRole(null);
@@ -152,7 +159,13 @@ function App() {
     );
   }
 
+  // ── Role Selection Screen (if not yet selected) ─────────────────────────────
+  if (isLoggedIn && !selectedRole) {
+    return <RoleSelection onSelect={handleRoleSelect} />;
+  }
+
   // ── Logged-in views ─────────────────────────────────────────────────────────
+
   return (
     <div className="min-h-screen">
 
