@@ -1,5 +1,8 @@
 import MatchScore from "../../components/MatchScore";
 import CreateEvent from "./CreateEvent";
+import Registrations from "./Registrations";
+import Analytics from "./Analytics";
+import MyEvents from "./MyEvents";
 
 import { useState } from "react";
 import {
@@ -330,4 +333,5 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
     </div>
   );
 }
+
 
