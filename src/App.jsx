@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
@@ -21,18 +20,53 @@ import Registrations from "./pages/OrganizerDashboard/Registrations";
 import Analytics from "./pages/OrganizerDashboard/Analytics";
 
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-import RoleSelection from "./pages/RoleSelection";
+
+/**
+ * Derive the role from the stored user object.
+ * Maps backend roles (USER / ORGANIZER / ADMIN) → app role keys.
+ */
+function getRoleFromUser(userObj) {
+  if (!userObj) return null;
+  const role = (userObj.role || "").toUpperCase();
+  if (role === "ORGANIZER") return "organizer";
+  if (role === "ADMIN") return "admin";
+  return "user";
+}
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authPage, setAuthPage] = useState("login");
 
+  // Role is auto-detected from the JWT user object — no manual selection needed
   const [selectedRole, setSelectedRole] = useState(null);
 
   const [darkMode, setDarkMode] = useState(false);
   const [page, setPage] = useState("home");
 
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+
+  // Restore session on page load
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("user");
+    if (token && storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setIsLoggedIn(true);
+        setSelectedRole(getRoleFromUser(user));
+        setPage(
+          getRoleFromUser(user) === "organizer"
+            ? "organizer"
+            : getRoleFromUser(user) === "admin"
+            ? "admin"
+            : "home"
+        );
+      } catch {
+        // Corrupt storage — clear it
+        localStorage.clear();
+      }
+    }
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -48,18 +82,30 @@ function App() {
     setPage("details");
   };
 
-  const handleLogin = () => {
+  /**
+   * Called by Login after a successful login response.
+   * Receives the user object returned from the API.
+   */
+  const handleLogin = (user) => {
+    const role = getRoleFromUser(user);
     setIsLoggedIn(true);
-    setSelectedRole(null);
-    setPage("home");
+    setSelectedRole(role);
+    setPage(
+      role === "organizer" ? "organizer" : role === "admin" ? "admin" : "home"
+    );
   };
 
   const handleSignup = () => {
     setAuthPage("login");
   };
 
-  const changeRole = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    setIsLoggedIn(false);
     setSelectedRole(null);
+    setAuthPage("login");
     setPage("home");
   };
 
@@ -67,7 +113,7 @@ function App() {
     setPage(pageName);
   };
 
-  // LOGIN / SIGNUP / OTP
+  // ── Auth screens ────────────────────────────────────────────────────────────
   if (!isLoggedIn) {
     if (authPage === "signup") {
       return (
@@ -96,24 +142,10 @@ function App() {
     );
   }
 
-  // ROLE SELECTION
-  if (!selectedRole) {
-    return (
-      <RoleSelection
-        darkMode={darkMode}
-        onSelect={(role) => {
-          setSelectedRole(role);
-
-          if (role === "user") setPage("home");
-          if (role === "organizer") setPage("organizer");
-          if (role === "admin") setPage("admin");
-        }}
-      />
-    );
-  }
-
+  // ── Logged-in views ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen">
+
       {/* USER NAVBAR */}
       {selectedRole === "user" && (
         <Navbar
@@ -124,7 +156,7 @@ function App() {
           onExplore={goExplore}
           onMyOpportunities={goMyOpportunities}
           onProfile={goProfile}
-          onChangeRole={changeRole}
+          onChangeRole={handleLogout}
         />
       )}
 
@@ -155,10 +187,7 @@ function App() {
       )}
 
       {selectedRole === "user" && page === "my-opportunities" && (
-        <MyOpportunities
-          onExplore={goExplore}
-          darkMode={darkMode}
-        />
+        <MyOpportunities onExplore={goExplore} darkMode={darkMode} />
       )}
 
       {/* ORGANIZER PAGES */}
@@ -166,7 +195,7 @@ function App() {
         <OrganizerDashboard
           darkMode={darkMode}
           setDarkMode={setDarkMode}
-          onChangeRole={changeRole}
+          onChangeRole={handleLogout}
           onNavigate={openOrganizerPage}
         />
       )}
@@ -223,7 +252,7 @@ function App() {
       {selectedRole === "admin" && page === "admin" && (
         <AdminDashboard
           darkMode={darkMode}
-          onChangeRole={changeRole}
+          onChangeRole={handleLogout}
         />
       )}
     </div>

@@ -1,13 +1,12 @@
-
 import { useEffect, useState } from "react";
 import {
   Users,
   ClipboardList,
   RefreshCw,
   CalendarDays,
+  Loader2,
 } from "lucide-react";
-
-const API_BASE_URL = "https://backend-task-3-zr8a.vercel.app";
+import { getOpportunities } from "../../services/api";
 
 export default function Registrations() {
   const [events, setEvents] = useState([]);
@@ -17,48 +16,10 @@ export default function Registrations() {
   const loadEvents = async () => {
     setLoading(true);
     setError("");
-
     try {
-      const token = localStorage.getItem("accessToken");
-
-      if (!token) {
-        throw new Error("Please login first to view events.");
-      }
-
-      const response = await fetch(
-        `${API_BASE_URL}/opportunities`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok || result.success === false) {
-        throw new Error(
-          result.message || `Unable to load events (${response.status}).`
-        );
-      }
-
-      let list = [];
-
-      if (Array.isArray(result.data)) {
-        list = result.data;
-      } else if (Array.isArray(result.data?.opportunities)) {
-        list = result.data.opportunities;
-      } else if (Array.isArray(result.data?.events)) {
-        list = result.data.events;
-      } else if (Array.isArray(result.opportunities)) {
-        list = result.opportunities;
-      } else if (Array.isArray(result.events)) {
-        list = result.events;
-      }
-
-      setEvents(list);
+      const data = await getOpportunities();
+      // API returns { success, count, opportunities: [...] }
+      setEvents(data.opportunities || []);
     } catch (err) {
       setError(err.message || "Something went wrong while loading events.");
       setEvents([]);
@@ -71,25 +32,20 @@ export default function Registrations() {
     loadEvents();
   }, []);
 
-  const totalRegistrations = events.reduce((total, event) => {
-    return (
-      total +
-      Number(event.registrationsCount ?? event.registrations ?? 0)
-    );
-  }, 0);
+  const totalRegistrations = events.reduce(
+    (total, event) =>
+      total + Number(event.registrationsCount ?? event.registrations ?? 0),
+    0
+  );
 
   const cardClass = "rounded-2xl bg-[#EEEEEB] p-5";
   const mutedClass = "text-sm text-[#6B6F6B]";
 
   return (
     <div className="space-y-6">
-  
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1E1E1C]">
-            Registrations
-          </h1>
-
+          <h1 className="text-2xl font-bold text-[#1E1E1C]">Registrations</h1>
           <p className="mt-1 text-sm text-[#6B6F6B]">
             Manage your events and registration overview.
           </p>
@@ -101,7 +57,7 @@ export default function Registrations() {
           disabled={loading}
           className="flex items-center gap-2 rounded-xl bg-[#1F4D3F] px-4 py-3 font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <RefreshCw size={17} />
+          <RefreshCw size={17} className={loading ? "animate-spin" : ""} />
           {loading ? "Loading..." : "Refresh"}
         </button>
       </div>
@@ -110,33 +66,29 @@ export default function Registrations() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className={cardClass}>
           <Users className="mb-3 text-[#1F4D3F]" size={26} />
-
           <p className={mutedClass}>Total Registrations</p>
-
           <h2 className="mt-1 text-3xl font-bold text-[#1E1E1C]">
-            {totalRegistrations}
+            {loading ? "—" : totalRegistrations}
           </h2>
         </div>
 
         <div className={cardClass}>
           <ClipboardList className="mb-3 text-[#D9673B]" size={26} />
-
           <p className={mutedClass}>Events Available</p>
-
           <h2 className="mt-1 text-3xl font-bold text-[#1E1E1C]">
-            {events.length}
+            {loading ? "—" : events.length}
           </h2>
         </div>
       </div>
 
-    
+      {/* Loading state */}
       {loading && (
-        <div className={`${cardClass} text-center`}>
-          <p className="text-[#6B6F6B]">Loading events...</p>
+        <div className={`${cardClass} flex items-center justify-center py-10`}>
+          <Loader2 className="animate-spin text-[#1F4D3F]" size={30} />
         </div>
       )}
 
-      
+      {/* Error state */}
       {!loading && error && (
         <div
           role="alert"
@@ -144,7 +96,6 @@ export default function Registrations() {
         >
           <p className="font-semibold">Unable to load events</p>
           <p className="mt-1">{error}</p>
-
           <button
             type="button"
             onClick={loadEvents}
@@ -155,16 +106,15 @@ export default function Registrations() {
         </div>
       )}
 
-
+      {/* Events table */}
       {!loading && !error && events.length > 0 && (
         <div className="overflow-hidden rounded-2xl border border-[#D9DCD6]">
           <div className="border-b border-[#D9DCD6] p-5">
             <h2 className="font-semibold text-[#1E1E1C]">
               Event Registration Overview
             </h2>
-
             <p className={`mt-1 ${mutedClass}`}>
-              Events returned by the server.
+              All opportunities on the platform.
             </p>
           </div>
 
@@ -190,9 +140,8 @@ export default function Registrations() {
                       <div className="font-medium text-[#1E1E1C]">
                         {event.title || "Untitled Event"}
                       </div>
-
                       <div className="mt-1 text-xs text-[#6B6F6B]">
-                        {event.organization || "Organization not provided"}
+                        {event.organization || "—"}
                       </div>
                     </td>
 
@@ -202,21 +151,27 @@ export default function Registrations() {
 
                     <td className="p-4 text-[#1E1E1C]">
                       {event.deadline
-                        ? String(event.deadline).slice(0, 10)
+                        ? new Date(event.deadline).toLocaleDateString("en-IN")
                         : "—"}
                     </td>
 
                     <td className="p-4 text-[#1E1E1C]">
-                      {event.registrationsCount ??
-                        event.registrations ??
-                        0}
+                      {event.registrationsCount ?? event.registrations ?? 0}
                       {event.maxParticipants != null
                         ? ` / ${event.maxParticipants}`
                         : ""}
                     </td>
 
                     <td className="p-4">
-                      <span className="rounded-full bg-[#E8B84A]/20 px-3 py-1 text-xs font-medium text-[#1E1E1C]">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${
+                          event.status === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : event.status === "rejected"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-[#E8B84A]/20 text-[#1E1E1C]"
+                        }`}
+                      >
                         {event.status || "Available"}
                       </span>
                     </td>
@@ -231,19 +186,13 @@ export default function Registrations() {
       {/* Empty state */}
       {!loading && !error && events.length === 0 && (
         <div className={`${cardClass} py-10 text-center`}>
-          <CalendarDays
-            size={36}
-            className="mx-auto mb-3 text-[#1F4D3F]"
-          />
-
+          <CalendarDays size={36} className="mx-auto mb-3 text-[#1F4D3F]" />
           <h2 className="text-lg font-semibold text-[#1E1E1C]">
             No events found
           </h2>
-
           <p className="mx-auto mt-2 max-w-md text-sm text-[#6B6F6B]">
-            created event
+            Create an event to see it here.
           </p>
-
           <button
             type="button"
             onClick={loadEvents}
@@ -255,8 +204,7 @@ export default function Registrations() {
       )}
 
       <p className="text-xs text-[#6B6F6B]">
-        Actual participant details and registration counts depend on
-        registration data provided by the backend.
+        Registration counts depend on registration data provided by the backend.
       </p>
     </div>
   );

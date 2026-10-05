@@ -1,100 +1,83 @@
-import { useMemo, useState } from "react";
-import {
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, SlidersHorizontal, RefreshCw } from "lucide-react";
 
 import FilterSidebar from "../../components/FilterSidebar";
 import OpportunityCard from "../../components/OpportunityCard";
+import { getOpportunities } from "../../services/api";
 
 function Explore({ onViewDetails }) {
   const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("All");
 
-  const opportunities = [
-    {
-      id: 1,
-      title: "National Coding Hackathon",
-      type: "Hackathon",
-      description:
-        "Build innovative solutions and compete with students from different colleges.",
-      date: "20 Oct 2026",
-      location: "Online",
-    },
-    {
-      id: 2,
-      title: "Frontend Development Internship",
-      type: "Internship",
-      description:
-        "Gain practical experience in frontend development through a real project.",
-      date: "15 Nov 2026",
-      location: "Remote",
-    },
-    {
-      id: 3,
-      title: "Technology Workshop",
-      type: "Workshop",
-      description:
-        "Learn practical development concepts through an interactive workshop.",
-      date: "28 Oct 2026",
-      location: "New Delhi",
-    },
-    {
-  id: 4,
-  title: "National Coding Competition",
-  type: "Competition",
-  description:
-    "Test your coding skills and compete with talented students from different colleges.",
-  date: "5 Nov 2026",
-  location: "Online",
-},
-    
-  ];
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchOpportunities = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await getOpportunities();
+      // API returns { success, count, opportunities: [...] }
+      setOpportunities(data.opportunities || []);
+    } catch (err) {
+      setError(err.message || "Unable to load opportunities.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOpportunities();
+  }, []);
 
   const filteredOpportunities = useMemo(() => {
     return opportunities.filter((item) => {
       const matchesSearch =
-        item.title.toLowerCase().includes(search.toLowerCase()) ||
-        item.description.toLowerCase().includes(search.toLowerCase());
+        (item.title || "").toLowerCase().includes(search.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(search.toLowerCase()) ||
+        (item.organization || "").toLowerCase().includes(search.toLowerCase());
 
       const matchesType =
         selectedType === "All" ||
-        item.type === selectedType;
+        (item.category || "").toLowerCase() === selectedType.toLowerCase();
 
       return matchesSearch && matchesType;
     });
-  }, [search, selectedType]);
+  }, [search, selectedType, opportunities]);
 
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-        
-        <div className="mb-7">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-            Opportunity Hub
-          </p>
+        <div className="mb-7 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
+              Opportunity Hub
+            </p>
+            <h1 className="text-2xl font-bold sm:text-3xl">
+              Explore Opportunities
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted)]">
+              Discover opportunities that match your interests and skills.
+            </p>
+          </div>
 
-          <h1 className="text-2xl font-bold sm:text-3xl">
-            Explore Opportunities
-          </h1>
-
-          <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted)]">
-            Discover opportunities that match your interests and skills.
-          </p>
+          <button
+            type="button"
+            onClick={fetchOpportunities}
+            disabled={loading}
+            className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium transition hover:opacity-80 disabled:opacity-50"
+          >
+            <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+            {loading ? "Loading..." : "Refresh"}
+          </button>
         </div>
 
         <div className="mb-6 flex flex-col gap-3 sm:flex-row">
-
           <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-
-            <Search
-              size={19}
-              className="shrink-0 text-[var(--text-muted)]"
-            />
-
+            <Search size={19} className="shrink-0 text-[var(--text-muted)]" />
             <input
               type="text"
               value={search}
@@ -102,7 +85,6 @@ function Explore({ onViewDetails }) {
               placeholder="Search opportunities..."
               className="w-full min-w-0 bg-transparent text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
             />
-
           </div>
 
           <button
@@ -113,36 +95,28 @@ function Explore({ onViewDetails }) {
             <SlidersHorizontal size={18} />
             Filters
           </button>
-
-        </div>
-       <div className="mb-7 flex gap-2 overflow-x-auto pb-1">
-
-          {[
-            "All",
-            "Hackathon",
-            "Internship",
-            "Workshop",
-            "Competition",
-          ].map((type) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => setSelectedType(type)}
-              className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
-                selectedType === type
-                  ? "bg-[var(--primary)] text-white"
-                  : "border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]"
-              }`}
-            >
-              {type}
-            </button>
-          ))}
-
         </div>
 
-    
+        <div className="mb-7 flex gap-2 overflow-x-auto pb-1">
+          {["All", "Hackathon", "Internship", "Workshop", "Competition"].map(
+            (type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setSelectedType(type)}
+                className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
+                  selectedType === type
+                    ? "bg-[var(--primary)] text-white"
+                    : "border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]"
+                }`}
+              >
+                {type}
+              </button>
+            )
+          )}
+        </div>
+
         <div className="flex flex-col gap-6 lg:flex-row">
-
           {filterOpen && (
             <FilterSidebar
               darkMode={document.documentElement.classList.contains("dark")}
@@ -150,74 +124,94 @@ function Explore({ onViewDetails }) {
           )}
 
           <div className="min-w-0 flex-1">
-
-            {filteredOpportunities.length === 0 ? (
+            {/* Loading state */}
+            {loading && (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
-                <p className="font-semibold">
-                  No opportunities found
+                <p className="text-sm text-[var(--text-muted)]">
+                  Loading opportunities...
                 </p>
-
-                <p className="mt-2 text-sm text-[var(--text-muted)]">
-                  Try another search or category.
-                </p>
-              </div>
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-
-                {filteredOpportunities.map((item) => (
-                  <OpportunityCard
-                    key={item.id}
-                    {...item}
-                    onViewDetails={() => onViewDetails(item)}
-                  />
-                ))}
-
               </div>
             )}
 
+            {/* Error state */}
+            {!loading && error && (
+              <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+                <p className="font-semibold text-red-700">{error}</p>
+                <button
+                  type="button"
+                  onClick={fetchOpportunities}
+                  className="mt-3 rounded-lg bg-[#1F4D3F] px-4 py-2 text-sm text-white"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!loading && !error && filteredOpportunities.length === 0 && (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
+                <p className="font-semibold">No opportunities found</p>
+                <p className="mt-2 text-sm text-[var(--text-muted)]">
+                  {opportunities.length === 0
+                    ? "No opportunities available yet."
+                    : "Try another search or category."}
+                </p>
+              </div>
+            )}
+
+            {/* Results grid */}
+            {!loading && !error && filteredOpportunities.length > 0 && (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {filteredOpportunities.map((item) => (
+                  <OpportunityCard
+                    key={item._id || item.id}
+                    {...item}
+                    // Normalise fields so OpportunityCard receives what it expects
+                    id={item._id || item.id}
+                    type={item.category}
+                    date={
+                      item.deadline
+                        ? new Date(item.deadline).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : ""
+                    }
+                    location={item.location || "Online"}
+                    onViewDetails={() => onViewDetails(item)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-
         </div>
-
       </div>
-      
+
       <section className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-
-        <h2 className="text-xl font-bold sm:text-2xl">
-          Explore Categories
-        </h2>
-
+        <h2 className="text-xl font-bold sm:text-2xl">Explore Categories</h2>
         <p className="mt-1 text-xs opacity-60">
           Browse opportunities by category.
         </p>
 
         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-          {[
-            "Hackathons",
-            "Workshops",
-            "Internships",
-            "Competitions",
-          ].map((category) => (
-            <button
-              key={category}
-              type="button"
-              className="rounded-2xl border border-black/10 bg-[var(--surface)] p-5 text-left transition hover:-translate-y-1"
-            >
-              <h3 className="font-semibold">
-                {category}
-              </h3>
-
-              <p className="mt-2 text-xs opacity-60">
-                Explore opportunities
-              </p>
-            </button>
-          ))}
-
+          {["Hackathons", "Workshops", "Internships", "Competitions"].map(
+            (category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() =>
+                  setSelectedType(category.replace(/s$/, ""))
+                }
+                className="rounded-2xl border border-black/10 bg-[var(--surface)] p-5 text-left transition hover:-translate-y-1"
+              >
+                <h3 className="font-semibold">{category}</h3>
+                <p className="mt-2 text-xs opacity-60">Explore opportunities</p>
+              </button>
+            )
+          )}
         </div>
-
       </section>
-
     </main>
   );
 }
