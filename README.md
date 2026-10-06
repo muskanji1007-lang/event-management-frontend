@@ -1,88 +1,74 @@
-# Opportunity Hub - Frontend
+# 🚀 Opportunity Hub - Developer Guide
 
-Welcome to the frontend repository for **Opportunity Hub**, an AI-powered platform connecting Students, Organizers, and Platform Administrators. 
-
-This project is built using **React + Vite** and styled with **Tailwind CSS**.
-
-## ✨ Features Overview
-
-* **🎓 Student Portal:** Discover events, get AI-driven event recommendations based on skills/branch, and track registered opportunities.
-* **📊 Organizer Dashboard:** Create events, predict expected registrations using ML, and view real-time platform analytics.
-* **🛡️ Admin Dashboard:** Review and approve events, manage users, and view AI-powered risk/anomaly scores for newly submitted events.
-
-## 🛠️ Tech Stack
-
-* **Framework:** React.js (via Vite)
-* **Styling:** Tailwind CSS
-* **Icons:** Lucide React
-* **Routing:** React Router
+Welcome to the frontend code! This README is specifically written to help **anyone** understand the code and make changes easily, even if you are new to the project.
 
 ---
 
-## 🚀 Getting Started
+## 📂 1. Where to find things (Project Structure)
 
-Follow these steps to set up the frontend on your local machine.
+All the important code is inside the `src/` folder. Here is your cheat sheet:
 
-### 1. Prerequisites
-Ensure you have the following installed:
-* [Node.js](https://nodejs.org/) (v16 or higher)
-* `npm` or `yarn`
-
-### 2. Installation
-Clone the repository and install the required dependencies:
-```bash
-git clone https://github.com/muskanji1007-lang/event-management-frontend.git
-cd event-management-frontend
-npm install
-```
-
-### 3. Environment Setup
-Create a `.env` file in the root directory (next to `package.json`) and add your backend API URL. If you don't create this file, the app will fallback to the default deployed backend.
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api/v1
-```
-*(Note: Machine Learning endpoints currently point to `http://127.0.0.1:8000` by default as per the Python FastAPI specifications).*
-
-### 4. Run the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
+* **`src/App.jsx`** ➡️ This is the main file. All the page routes (URLs) are defined here.
+* **`src/services/api.js`** ➡️ **(Most Important File)** ALL backend API calls are written here. If your backend URL changes, you edit this file.
+* **`src/pages/`** ➡️ Contains all the screens you see on the website, divided by folder:
+  * `/AdminDashboard` (Manage Events, Analytics, Approvals)
+  * `/OrganizerDashboard` (Create Event, My Events)
+  * `/Profile` (Student My Opportunities, Explore)
+  * `/Auth` (Login, Signup screens)
+* **`src/components/`** ➡️ Reusable UI pieces like the `Navbar`, `MatchScore` circles, etc.
 
 ---
 
-## 📁 Project Structure (How to make changes)
+## 🛠️ 2. How to make changes easily
 
-If you are a developer looking to edit the code, here is a quick guide to finding things:
+### 👉 How to change Backend API URLs
+1. Open `src/services/api.js`.
+2. At the top, you will see `API_BASE_URL` (for normal Node.js endpoints) and `ML_BASE_URL` (for Python ML endpoints).
+3. Change them directly here:
+   ```javascript
+   const API_BASE_URL = "https://your-new-backend.com/api/v1";
+   const ML_BASE_URL = "http://127.0.0.1:8000";
+   ```
 
-```text
-src/
-├── assets/         # Images, logos, and global CSS
-├── components/     # Reusable UI components (Navbar, MatchScore, etc.)
-├── pages/          # Main application screens (grouped by module)
-│   ├── AdminDashboard/     # Admin views (Analytics, Approvals, Manage Events)
-│   ├── OrganizerDashboard/ # Organizer views (Create Event, My Events, etc.)
-│   ├── Profile/            # Student views (Explore, My Opportunities)
-│   └── Auth/               # Login & Signup screens
-├── services/
-│   └── api.js      # ALL backend and ML API calls are centralized here
-└── App.jsx         # Main routing and Layout component
-```
+### 👉 How to change Colors and Styling
+This project uses **Tailwind CSS**. You don't need to write custom CSS files! 
+Just open any `.jsx` file and change the `className`.
+* Example: To change a button from Green to Blue, find `bg-[#1F4D3F]` and change it to `bg-blue-600`.
+* We also use inline styles for Dark Mode, like this: `style={{ background: card }}` where `card` changes color based on dark mode.
 
-### 🔌 Modifying API Calls
-All API requests (GET, POST, PUT, DELETE) are handled in `src/services/api.js`. 
-* If you need to change a backend endpoint, update the URL in this file.
-* There is a "Local Demo Override" safely built into functions like `deleteOpportunity` and `updateOpportunity` to allow the UI to function smoothly even if the backend returns permission errors.
+### 👉 How to add a New Page
+1. Create a new file in `src/pages/`, for example `src/pages/ContactUs.jsx`.
+2. Write a basic React component inside it.
+3. Open `src/App.jsx`.
+4. Import your new page at the top: `import ContactUs from "./pages/ContactUs";`
+5. Add a route inside the `<Routes>` block: 
+   `<Route path="/contact" element={<ContactUs />} />`
 
-### 🎨 Modifying the UI
-* The project uses **Tailwind CSS** for styling. You can change colors, padding, and layout by modifying the `className` attributes directly inside the React components.
-* Dark mode is natively supported and passed down as a `darkMode` prop to various dashboard components.
+### 👉 How to fix "Backend is crashing" (The Demo Mode)
+If the backend developer hasn't fixed the backend yet and APIs are throwing `500 Server Error` or `403 Access Denied`, you can still make the UI work for demonstrations!
+* Open `src/services/api.js`.
+* Find the function you want to mock (like `updateOpportunity`).
+* In the `catch (error)` block, simply save the data to `localStorage` and return `{ success: true }`. The UI will magically think the backend worked perfectly! (We have already done this for approvals and deletions).
 
 ---
 
-## 🛑 Troubleshooting
+## 💻 3. How to Run the Project Locally
 
-* **Blank Screen / React Error:** Check the browser console (`F12`). Usually caused by a missing import or a broken API response.
-* **CORS Errors:** Ensure your backend server has CORS enabled and allows requests from `http://localhost:5173`.
-* **API calls returning 500 / Failing:** Ensure your Node.js backend and Python ML backend (`localhost:8000`) are actively running in the background.
+1. **Install Node.js** on your computer.
+2. Open terminal in this folder and type:
+   ```bash
+   npm install
+   ```
+3. Start the server by typing:
+   ```bash
+   npm run dev
+   ```
+4. Click the local link provided (usually `http://localhost:5173`).
+
+---
+
+## 🚨 Quick Troubleshooting
+
+* **Blank White Screen:** Press `F12` and look at the Console. You probably have a typo in your React code or forgot to `import` a file.
+* **CORS Error in Network Tab:** This is a **Backend** issue, not frontend. Tell the backend developer to install the `cors` package and allow `http://localhost:5173`.
+* **ML Features not working:** Ensure your Python FastAPI is running on `http://127.0.0.1:8000`. If it's running on a different port, update `ML_BASE_URL` in `src/services/api.js`.
