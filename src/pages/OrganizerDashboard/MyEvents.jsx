@@ -13,8 +13,7 @@ export default function MyEvents() {
     setError("");
     try {
       const data = await getOpportunities();
-      // API returns { success, count, opportunities: [...] }
-      // Filter to only show events created by the logged-in organizer
+    
       const loggedInUser = JSON.parse(localStorage.getItem("user") || "{}");
       const myEvents = (data.opportunities || []).filter(
         (opp) =>
