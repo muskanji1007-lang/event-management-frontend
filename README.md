@@ -52,7 +52,32 @@ If the backend developer hasn't fixed the backend yet and APIs are throwing `500
 
 ---
 
-## 💻 3. How to Run the Project Locally
+## 🎨 3. Theme & Color Palette (Hex Codes)
+
+To maintain the exact branding of Opportunity Hub, here are all the specific Hex Codes used in the project. You can use these anywhere in Tailwind classes like `bg-[#1F4D3F]` or `text-[#D9673B]`.
+
+### ☀️ Light Mode Colors
+* **Background:** `#F5F5F2` (Main page background)
+* **Card/Surface:** `#EEEEEB` (Containers, cards, and input fields)
+* **Main Text:** `#1E1E1C` (Headings and primary text)
+* **Muted Text:** `#6B6F6B` (Subtitles and secondary text)
+* **Borders:** `#D9DCD6` (Dividers and borders)
+* **Primary Accent (Dark Green):** `#1F4D3F` (Buttons, Icons, and active elements)
+* **Secondary Accent (Orange):** `#D9673B` (Rejections, Alerts, and Highlights)
+* **Tertiary Accent (Yellow):** `#E8B84A` (Pending status and Warnings)
+
+### 🌙 Dark Mode Colors
+* **Background:** `#0F1210` (Main page background)
+* **Card/Surface:** `#1B1F1C` (Containers and cards)
+* **Main Text:** `#F1F3EF` (Headings and primary text)
+* **Muted Text:** `#9A9F9A` (Subtitles and secondary text)
+* **Borders:** `#343A35` (Dividers and borders)
+* **Primary Accent (Light Green):** `#8FD3B0` (Buttons, Icons, and active elements)
+* **Secondary Accent (Light Orange):** `#F0805A` (Rejections and Alerts)
+
+---
+
+## 💻 4. How to Run the Project Locally
 
 1. **Install Node.js** on your computer.
 2. Open terminal in this folder and type:
@@ -72,3 +97,4 @@ If the backend developer hasn't fixed the backend yet and APIs are throwing `500
 * **Blank White Screen:** Press `F12` and look at the Console. You probably have a typo in your React code or forgot to `import` a file.
 * **CORS Error in Network Tab:** This is a **Backend** issue, not frontend. Tell the backend developer to install the `cors` package and allow `http://localhost:5173`.
 * **ML Features not working:** Ensure your Python FastAPI is running on `http://127.0.0.1:8000`. If it's running on a different port, update `ML_BASE_URL` in `src/services/api.js`.
+
