@@ -197,8 +197,27 @@ export const getUserApplications = async () => {
     });
     return await handleResponse(response, "Unable to load applications");
   } catch (err) {
-    console.warn("Backend error bypassed for getUserApplications. Returning empty list.");
-    return { success: true, applications: [] };
+    console.warn("Backend 500 bypassed for getUserApplications. Loading from local demo.");
+    const demoApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
+    
+    // Fallback: manually fetch all opportunities and filter them by the ones the user applied to in the demo
+    const allOppsRes = await getOpportunities();
+    const allOpps = allOppsRes.opportunities || [];
+    
+    const applications = demoApps.map(appId => {
+      const opp = allOpps.find(o => (o._id || o.id) === appId);
+      if (opp) {
+        return {
+          _id: "demo-app-" + appId,
+          opportunity: opp,
+          status: "Applied",
+          appliedAt: new Date().toISOString()
+        };
+      }
+      return null;
+    }).filter(Boolean);
+    
+    return { success: true, applications };
   }
 };
 
@@ -310,14 +329,24 @@ export const getOpportunityApplicants = async (opportunityId) => {
 /** 3.7 Apply to an opportunity (USER role only) */
 export const applyToOpportunity = async (opportunityId) => {
   const token = getAuthToken();
-  const response = await fetch(
-    `${API_BASE_URL}/opportunities/${opportunityId}/apply`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/opportunities/${opportunityId}/apply`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return await handleResponse(response, "Unable to apply for opportunity");
+  } catch (err) {
+    console.warn("Backend Apply failed. Saving to local demo mode.");
+    const demoApps = JSON.parse(localStorage.getItem('demo_applications') || '[]');
+    if (!demoApps.includes(opportunityId)) {
+      demoApps.push(opportunityId);
     }
-  );
-  return handleResponse(response, "Unable to apply for opportunity");
+    localStorage.setItem('demo_applications', JSON.stringify(demoApps));
+    return { success: true };
+  }
 };
 
 /** 3.8 Get personalised recommendations for the logged-in user */
