@@ -22,10 +22,7 @@ import Analytics from "./pages/OrganizerDashboard/Analytics";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import RoleSelection from "./pages/RoleSelection";
 
-/**
- * Derive the role from the stored user object.
- * Maps backend roles (USER / ORGANIZER / ADMIN) → app role keys.
- */
+
 function getRoleFromUser(userObj) {
   if (!userObj) return null;
   const role = (userObj.role || "").toUpperCase();
@@ -88,8 +85,7 @@ function App() {
 
   const handleLogin = (user) => {
     setIsLoggedIn(true);
-    // Don't auto-set role because backend ignores the signup role and defaults everyone to USER.
-    // Instead, leave selectedRole as null to trigger RoleSelection.
+    
     setSelectedRole(null); 
   };
 
@@ -130,7 +126,6 @@ function App() {
     setPage(pageName);
   };
 
-  // ── Auth screens ────────────────────────────────────────────────────────────
   if (!isLoggedIn) {
     if (authPage === "signup") {
       return (
@@ -159,12 +154,10 @@ function App() {
     );
   }
 
-  // ── Role Selection Screen (if not yet selected) ─────────────────────────────
   if (isLoggedIn && !selectedRole) {
     return <RoleSelection onSelect={handleRoleSelect} />;
   }
 
-  // ── Logged-in views ─────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen">

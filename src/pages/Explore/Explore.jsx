@@ -19,7 +19,6 @@ function Explore({ onViewDetails }) {
     setError("");
     try {
       const data = await getOpportunities();
-      // API returns { success, count, opportunities: [...] }
       setOpportunities(data.opportunities || []);
     } catch (err) {
       setError(err.message || "Unable to load opportunities.");

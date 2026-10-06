@@ -16,7 +16,6 @@ function Profile({ onExplore }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Skill editing state
   const [skillInput, setSkillInput] = useState("");
   const [savingSkills, setSavingSkills] = useState(false);
   const [skillMessage, setSkillMessage] = useState("");
@@ -98,7 +97,6 @@ function Profile({ onExplore }) {
     window.location.reload();
   };
 
-  // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--bg)]">
@@ -110,7 +108,6 @@ function Profile({ onExplore }) {
     );
   }
 
-  // ── Error ──────────────────────────────────────────────────────────────────
   if (error) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-4">
@@ -128,7 +125,6 @@ function Profile({ onExplore }) {
     );
   }
 
-  // Derive initials from name
   const initials = (user?.name || "?")
     .split(" ")
     .map((w) => w[0])
@@ -156,7 +152,6 @@ function Profile({ onExplore }) {
 
         <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
 
-          {/* ── Left column ────────────────────────────────────────────────── */}
           <div>
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
               <div className="flex items-center gap-4">
@@ -217,10 +212,8 @@ function Profile({ onExplore }) {
             </section>
           </div>
 
-          {/* ── Right column ───────────────────────────────────────────────── */}
           <div className="space-y-6">
 
-            {/* Skills */}
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
               <div>
                 <h3 className="text-lg font-bold">My Skills</h3>

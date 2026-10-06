@@ -56,8 +56,7 @@ function MyOpportunities({ onViewDetails, darkMode }) {
         title: opp.title || "Untitled Opportunity",
         date: opp.deadline ? new Date(opp.deadline).toLocaleDateString() : "TBA",
         mode: opp.location || "Online",
-        tab: "Registered", // Defaulting all to registered for now as backend doesn't track upcoming/completed
-        type: opp.category || "Event",
+        tab: "Registered", 
         action: "View Details",
         milestone: false,
         rawOpportunity: opp

@@ -5,7 +5,7 @@ import {
   CalendarDays,
   TrendingUp,
 } from "lucide-react";
-import { getOpportunities, getAllUsers } from "../../services/api";
+import { getOrganizerAnalytics } from "../../services/api";
 
 export default function Analytics({ darkMode = false }) {
   const [data, setData] = useState(null);
@@ -21,42 +21,10 @@ export default function Analytics({ darkMode = false }) {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const eventsRes = await getOpportunities();
-        let totalEvents = 0;
-        let approvedEvents = 0;
-        let pendingEvents = 0;
-        let rejectedEvents = 0;
-
-        if (eventsRes.success && eventsRes.opportunities) {
-          totalEvents = eventsRes.opportunities.length;
-          eventsRes.opportunities.forEach((evt) => {
-            const status = (evt.status || "Pending").toLowerCase();
-            if (status === "approved") approvedEvents++;
-            else if (status === "rejected") rejectedEvents++;
-            else pendingEvents++;
-          });
+        const result = await getOrganizerAnalytics();
+        if (result.success && result.data) {
+          setData(result.data);
         }
-
-        let totalUsers = 0;
-        let totalOrganizers = 0;
-        try {
-          const usersRes = await getAllUsers();
-          if (usersRes.success && usersRes.users) {
-            totalUsers = usersRes.users.length;
-            totalOrganizers = usersRes.users.filter((u) => u.role === "ORGANIZER").length;
-          }
-        } catch (e) {
-          console.warn("Could not fetch users for analytics", e);
-        }
-
-        setData({
-          totalUsers,
-          totalEvents,
-          approvedEvents,
-          pendingEvents,
-          rejectedEvents,
-          totalOrganizers,
-        });
       } catch (error) {
         console.error("Failed to load analytics:", error);
       } finally {
@@ -66,10 +34,10 @@ export default function Analytics({ darkMode = false }) {
     fetchAnalytics();
   }, []);
 
-  const totalUsers = data ? data.totalUsers : "...";
-  const totalEvents = data ? data.totalEvents : "...";
-  const approvedEvents = data ? data.approvedEvents : "...";
-  const pendingEvents = data ? data.pendingEvents : "...";
+  const totalUsers = data ? data.platform_statistics.total_users : "...";
+  const totalEvents = data ? data.platform_statistics.total_events : "...";
+  const approvedEvents = data ? data.event_statistics.approved : "...";
+  const pendingEvents = data ? data.event_statistics.pending : "...";
 
   return (
     <div className="space-y-6">
@@ -124,19 +92,19 @@ export default function Analytics({ darkMode = false }) {
           </h2>
         </div>
         {loading ? (
-          <p className="text-sm" style={{ color: muted }}>Loading live data...</p>
+          <p className="text-sm" style={{ color: muted }}>Loading live data from ML services...</p>
         ) : data ? (
           <div className="space-y-4">
             <p className="text-sm" style={{ color: text }}>
-              <strong>Platform Organizers:</strong> {data.totalOrganizers} registered.
+              <strong>Platform Organizers:</strong> {data.platform_statistics.total_organizers} (Verified: {data.organizer_statistics.verified})
             </p>
             <p className="text-sm" style={{ color: text }}>
-              <strong>Event Rejection Rate:</strong> {data.rejectedEvents} rejected recently.
+              <strong>Event Rejection Rate:</strong> {data.event_statistics.rejected} rejected recently.
             </p>
           </div>
         ) : (
           <p className="text-sm" style={{ color: muted }}>
-            Could not calculate Analytics. Ensure your connection is stable.
+            Could not connect to Analytics Server. Ensure you have the Admin/Organizer role.
           </p>
         )}
       </div>

@@ -30,14 +30,7 @@ function OpportunityCard({
           {type}
         </span>
 
-        <button
-          type="button"
-          aria-label="Save opportunity"
-          onClick={() => alert("Opportunity saved.")}
-          className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--surface-soft)]"
-        >
-          <Bookmark size={18} />
-        </button>
+        
 
       </div>
 

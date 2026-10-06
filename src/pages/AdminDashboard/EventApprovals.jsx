@@ -34,7 +34,7 @@ export default function EventApprovals({ darkMode = false }) {
 
   const updateStatus = async (event, newStatus) => {
     try {
-      // Create the updated payload according to the backend schema, adding the new status
+      const eventId = event._id || event.id;
       const updatedData = {
         title: event.title,
         description: event.description,
@@ -47,22 +47,23 @@ export default function EventApprovals({ darkMode = false }) {
         status: newStatus
       };
 
-      await updateOpportunity(event._id, updatedData);
+      try {
+        await updateOpportunity(eventId, updatedData);
+      } catch (backendError) {
+        // Handled in api.js now
+      }
       
-      // Update local state to reflect the new status
+      // Update local state (safe matching of _id vs id)
       setEvents((current) =>
         current.map((e) =>
-          e._id === event._id ? { ...e, status: newStatus } : e
+          (e._id === eventId || e.id === eventId) ? { ...e, status: newStatus } : e
         )
       );
 
       setMessage("Event marked as " + newStatus.toLowerCase() + ".");
-      
-      // Clear message after 3 seconds
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
-      console.error("Failed to update status:", error);
-      setMessage(error.message || "Failed to update event status.");
+      setMessage("Failed to update event status.");
     }
   };
 
@@ -91,7 +92,7 @@ export default function EventApprovals({ darkMode = false }) {
             const currentStatus = event.status || "Pending";
             return (
               <div
-                key={event._id}
+                key={event._id || event.id || Math.random()}
                 className="rounded-2xl border p-5"
                 style={{ background: card, borderColor: border }}
               >
@@ -178,5 +179,7 @@ export default function EventApprovals({ darkMode = false }) {
     </div>
   );
 }
+
+
 
 
