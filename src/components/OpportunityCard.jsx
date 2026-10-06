@@ -28,7 +28,7 @@ function OpportunityCard({
             <div className="mb-4 flex items-start justify-between gap-3">
 
         <span
-          className={ounded-full px-3 py-1 text-xs font-semibold \}
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${typeColor}`}
         >
           {type}
         </span>
