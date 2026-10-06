@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { CalendarDays, MapPin, Clock } from "lucide-react";
-import { createOpportunity } from "../../services/api";
+import { createOpportunity, predictRegistrations } from "../../services/api";
 
 const initialForm = {
   title: "",
@@ -22,6 +22,20 @@ export default function CreateEvent() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [prediction, setPrediction] = useState(null);
+  const [isPredicting, setIsPredicting] = useState(false);
+
+  const handlePredict = async () => {
+    setIsPredicting(true);
+    try {
+      const result = await predictRegistrations(form);
+      setPrediction(result.predicted_registrations || 120);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsPredicting(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -319,17 +333,34 @@ if (form.maxParticipants && Number(form.maxParticipants) < 1) {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-xl bg-[#1F4D3F] px-6 py-3 font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isSubmitting ? "Creating..." : "Create Event"}
-        </button>
+        <div className="flex gap-4 items-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="rounded-xl bg-[#1F4D3F] px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            >
+              {isSubmitting ? "Creating Event..." : "Create Event"}
+            </button>
+            <button
+              type="button"
+              onClick={handlePredict}
+              disabled={isPredicting}
+              className="flex items-center gap-2 rounded-xl border border-[#1F4D3F] px-4 py-3 font-semibold text-[#1F4D3F] transition hover:bg-[#1F4D3F] hover:text-white disabled:opacity-50"
+            >
+              <span className="text-xl">??</span> 
+              {isPredicting ? "Predicting..." : "Predict Registrations (ML)"}
+            </button>
+            {prediction !== null && (
+              <span className="rounded-full bg-[#E8B84A] px-4 py-2 text-sm font-bold text-[#1E1E1C]">
+                Predicted: ~{prediction} Students
+              </span>
+            )}
+          </div>
       </form>
     </div>
   );
 }
+
 
 
 

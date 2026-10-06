@@ -1,11 +1,23 @@
 import { useState, useEffect } from "react";
 import { ClipboardCheck, Clock3, CheckCircle2, XCircle } from "lucide-react";
-import { getOpportunities, updateOpportunity } from "../../services/api";
+import { getOpportunities, updateOpportunity, getEventRisk } from "../../services/api";
 
 export default function EventApprovals({ darkMode = false }) {
   const [events, setEvents] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [riskScores, setRiskScores] = useState({});
+
+  const analyzeRisk = async (event) => {
+    const eventId = event._id || event.id;
+    setRiskScores(prev => ({ ...prev, [eventId]: 'loading' }));
+    try {
+      const result = await getEventRisk(event);
+      setRiskScores(prev => ({ ...prev, [eventId]: result }));
+    } catch (e) {
+      setRiskScores(prev => ({ ...prev, [eventId]: null }));
+    }
+  };
 
   const card = darkMode ? "#1B1F1C" : "#EEEEEB";
   const text = darkMode ? "#F1F3EF" : "#1E1E1C";
@@ -140,25 +152,47 @@ export default function EventApprovals({ darkMode = false }) {
 
                   {currentStatus === "Pending" && (
                     <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => updateStatus(event, "Approved")}
-                        className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                        style={{ background: "#1F4D3F" }}
-                      >
-                        <CheckCircle2 size={16} />
-                        Approve
-                      </button>
+                                            <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(event, "Approved")}
+                          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ background: "#1F4D3F" }}
+                        >
+                          <CheckCircle2 size={16} />
+                          Approve
+                        </button>
 
-                      <button
-                        type="button"
-                        onClick={() => updateStatus(event, "Rejected")}
-                        className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                        style={{ background: "#D9673B" }}
-                      >
-                        <XCircle size={16} />
-                        Reject
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(event, "Rejected")}
+                          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ background: "#D9673B" }}
+                        >
+                          <XCircle size={16} />
+                          Reject
+                        </button>
+                      </div>
+                      
+                      {/* AI Risk Assessment Button */}
+                      {!riskScores[event._id || event.id] ? (
+                        <button
+                          type="button"
+                          onClick={() => analyzeRisk(event)}
+                          className="flex items-center justify-center gap-1 rounded-lg border border-[#E8B84A] bg-[#E8B84A]/10 px-3 py-1.5 text-xs font-semibold text-[#E8B84A] transition hover:bg-[#E8B84A] hover:text-white"
+                        >
+                          ?? Analyze Risk (ML)
+                        </button>
+                      ) : riskScores[event._id || event.id] === 'loading' ? (
+                        <span className="text-xs text-[#E8B84A] animate-pulse">Analyzing...</span>
+                      ) : (
+                        <div className="mt-1 flex flex-col gap-1 text-xs">
+                           <span className="font-bold text-[#D9673B]">Risk Score: {riskScores[event._id || event.id].risk_score}/100</span>
+                           <span className="text-[#6B6F6B]">Priority: {riskScores[event._id || event.id].review_priority}</span>
+                        </div>
+                      )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -179,6 +213,7 @@ export default function EventApprovals({ darkMode = false }) {
     </div>
   );
 }
+
 
 
 

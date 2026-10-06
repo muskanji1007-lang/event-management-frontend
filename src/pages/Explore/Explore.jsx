@@ -178,6 +178,9 @@ function Explore({ onViewDetails }) {
                         : ""
                     }
                     location={item.location || "Online"}
+                    score={item.score}
+                    matched={item.matched}
+                    missing={item.missing}
                     onViewDetails={() => onViewDetails(item)}
                   />
                 ))}
