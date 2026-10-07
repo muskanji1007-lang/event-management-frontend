@@ -17,6 +17,8 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://backend-task-3-zr8a.vercel.app/api/v1";
 
+const ML_BASE_URL = import.meta.env.VITE_ML_BASE_URL || "${ML_BASE_URL}";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -401,7 +403,7 @@ export const getStudentRecommendations = async ({
 } = {}) => {
   const token = getAuthToken();
   try {
-    const response = await fetch(`http://127.0.0.1:8000/student/recommend`, {
+    const response = await fetch(`${ML_BASE_URL}/student/recommend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -454,16 +456,21 @@ export const getStudentRecommendations = async ({
  */
 export const predictRegistrations = async (eventData) => {
   const token = getAuthToken();
+  const payload = {
+    event_name: eventData.title || eventData.event_name,
+    category: eventData.category,
+    mode: eventData.mode
+  };
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/organizer/predict-registrations`,
+      `${ML_BASE_URL}/organizer/predict-registrations`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(eventData),
+        body: JSON.stringify(payload),
       }
     );
     return await handleResponse(response, "Unable to predict registrations.");
@@ -477,7 +484,7 @@ export const predictRegistrations = async (eventData) => {
 export const getEventDemand = async () => {
   const token = getAuthToken();
   const response = await fetch(
-    `http://127.0.0.1:8000/organizer/event-demand`,
+    `${ML_BASE_URL}/organizer/event-demand`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -490,7 +497,7 @@ export const getEventDemand = async () => {
 export const getOrganizerAnalytics = async () => {
   const token = getAuthToken();
   try {
-    const response = await fetch(`http://127.0.0.1:8000/organizer/analytics`, {
+    const response = await fetch(`${ML_BASE_URL}/organizer/analytics`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -514,14 +521,18 @@ export const getOrganizerAnalytics = async () => {
  */
 export const getEventRisk = async (eventData) => {
   const token = getAuthToken();
+  const payload = {
+    budget: eventData.prize_money || eventData.budget || 0,
+    expected_attendees: eventData.maxParticipants || eventData.expected_attendees || 100
+  };
   try {
-    const response = await fetch(`http://127.0.0.1:8000/admin/event-risk`, {
+    const response = await fetch(`${ML_BASE_URL}/admin/event-risk`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(eventData),
+      body: JSON.stringify(payload),
     });
     return await handleResponse(response, "Unable to calculate event risk.");
   } catch (error) {
@@ -539,7 +550,7 @@ export const getEventRisk = async (eventData) => {
 /** 5.6 Get supported technical domains (any authenticated user) */
 export const getDomains = async () => {
   const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}/ml/domains`, {
+  const response = await fetch(`${ML_BASE_URL}/domains`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -552,7 +563,7 @@ export const getDomains = async () => {
  */
 export const categorizeSkills = async (skills_text) => {
   const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}/ml/categorize`, {
+  const response = await fetch(`${ML_BASE_URL}/categorize`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -569,7 +580,7 @@ export const categorizeSkills = async (skills_text) => {
  */
 export const analyzeSentiment = async (review_text) => {
   const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}/ml/sentiment`, {
+  const response = await fetch(`${ML_BASE_URL}/sentiment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -586,7 +597,7 @@ export const analyzeSentiment = async (review_text) => {
  */
 export const analyzeSentimentBatch = async (reviews) => {
   const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}/ml/sentiment/batch`, {
+  const response = await fetch(`${ML_BASE_URL}/sentiment/batch`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -611,3 +622,21 @@ export const getAllUsers = async () => {
   return handleResponse(response, "Unable to load users.");
 };
 
+
+
+/**
+ * 5.10 AI Chatbot (Gemini Assistant)
+ * @param {{ message: string, previous_interaction_id?: string }} data
+ */
+export const sendChatMessage = async (data) => {
+  const token = getAuthToken();
+  const response = await fetch(`${ML_BASE_URL}/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse(response, "Unable to get chat response.");
+};
