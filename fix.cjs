@@ -1,4 +1,4 @@
 const fs = require('fs');
-let content = fs.readFileSync('src/components/OpportunityCard.jsx', 'utf8');
-content = content.replace(/className=\{\s*ounded-full[^>]+\>/g, 'className={`rounded-full px-3 py-1 text-xs font-semibold ${typeColor}`}\n        >');
-fs.writeFileSync('src/components/OpportunityCard.jsx', content);
+let content = fs.readFileSync('src/services/api.js', 'utf8');
+content = content.replace(/const ML_BASE_URL = .*?;/, 'const ML_BASE_URL = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8000";');
+fs.writeFileSync('src/services/api.js', content);

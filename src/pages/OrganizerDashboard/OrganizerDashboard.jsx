@@ -2,6 +2,7 @@ import MatchScore from "../../components/MatchScore";
 import CreateEvent from "./CreateEvent";
 import Registrations from "./Registrations";
 import Analytics from "./Analytics";
+import OrganizerProfile from "./OrganizerProfile";
 import MyEvents from "./MyEvents";
 
 import { useState } from "react";
@@ -86,14 +87,7 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
       return <Analytics darkMode={darkMode} />;
     }
     if (activePage === "Profile") {
-      return (
-        <section className="rounded-2xl p-6" style={{ background: card }}>
-          <h2 className="mb-3 text-xl font-bold">Organizer Profile</h2>
-          <p style={{ color: muted }}>
-            Organizer profile details can be added here.
-          </p>
-        </section>
-      );
+      return <OrganizerProfile darkMode={darkMode} />;
     }
 
     return (
