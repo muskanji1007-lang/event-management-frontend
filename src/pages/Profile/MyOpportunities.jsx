@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import {
   CalendarDays,
   CheckCircle2,
@@ -10,13 +9,18 @@ import {
   Search,
   Trophy,
   Users,
+  Bookmark
 } from "lucide-react";
-import { getUserApplications } from "../../services/api";
+import { getUserApplications, getOpportunities, getUserProfile } from "../../services/api";
 
 function MyOpportunities({ onViewDetails, darkMode }) {
   const [activeTab, setActiveTab] = useState("Registered");
   const [search, setSearch] = useState("");
+  
   const [applications, setApplications] = useState([]);
+  const [savedIds, setSavedIds] = useState([]);
+  const [allOpps, setAllOpps] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   
   const theme = {
@@ -32,41 +36,76 @@ function MyOpportunities({ onViewDetails, darkMode }) {
   };
 
   useEffect(() => {
-    const fetchApplications = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getUserApplications();
-        setApplications(data.applications || []);
+        const [appData, oppsData, userProfileData] = await Promise.all([
+          getUserApplications().catch(() => ({ applications: [] })),
+          getOpportunities().catch(() => ({ opportunities: [] })),
+          getUserProfile().catch(() => ({ user: { savedOpportunities: [] } }))
+        ]);
+        
+        setApplications(appData.applications || []);
+        setAllOpps(oppsData.opportunities || []);
+        setSavedIds(userProfileData.user?.savedOpportunities || []);
       } catch (err) {
-        console.error("Failed to fetch applications:", err);
+        console.error("Failed to fetch data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchApplications();
+    fetchData();
   }, []);
 
-  const opportunities = useMemo(() => {
-    return applications.map(app => {
-      const opp = app.opportunity || {};
-      return {
-        id: app._id,
-        status: app.status === "applied" ? "Confirmed Registration" : app.status,
-        organization: opp.organization || "Organizer",
-        title: opp.title || "Untitled Opportunity",
-        date: opp.deadline ? new Date(opp.deadline).toLocaleDateString() : "TBA",
-        mode: opp.location || "Online",
-        tab: "Registered", 
-        action: "View Details",
-        milestone: false,
-        rawOpportunity: opp
-      };
+  const opportunitiesList = useMemo(() => {
+    const list = [];
+    
+    // Process Registered
+    applications.forEach(app => {
+      if (app.opportunity) {
+        list.push({
+          id: app._id || app.id,
+          rawOpportunity: app.opportunity,
+          title: app.opportunity.title || "Untitled",
+          organization: app.opportunity.organization || "Unknown",
+          type: app.opportunity.category || "Hackathon",
+          date: new Date(app.opportunity.deadline || Date.now()).toLocaleDateString(),
+          mode: app.opportunity.location || "Online",
+          status: "Applied",
+          tab: "Registered",
+          action: "View Details"
+        });
+      }
     });
-  }, [applications]);
+
+    // Process Saved
+    savedIds.forEach(savedId => {
+      // Don't duplicate if already in registered
+      if (!list.some(item => item.tab === "Registered" && (item.rawOpportunity._id === savedId || item.rawOpportunity.id === savedId))) {
+        const opp = allOpps.find(o => (o._id || o.id) === savedId);
+        if (opp) {
+          list.push({
+            id: "saved-" + (opp._id || opp.id),
+            rawOpportunity: opp,
+            title: opp.title || "Untitled",
+            organization: opp.organization || "Unknown",
+            type: opp.category || "Hackathon",
+            date: new Date(opp.deadline || Date.now()).toLocaleDateString(),
+            mode: opp.location || "Online",
+            status: "Saved",
+            tab: "Saved",
+            action: "Apply Now"
+          });
+        }
+      }
+    });
+
+    return list;
+  }, [applications, savedIds, allOpps]);
 
   const filteredOpportunities = useMemo(() => {
-    return opportunities.filter((item) => {
-      const matchesTab = activeTab === "Registered" ? item.tab === "Registered" : false; // Only Registered is currently mapped
+    return opportunitiesList.filter((item) => {
+      const matchesTab = item.tab === activeTab;
       const searchText = search.toLowerCase();
       const matchesSearch =
         item.title.toLowerCase().includes(searchText) ||
@@ -75,20 +114,18 @@ function MyOpportunities({ onViewDetails, darkMode }) {
 
       return matchesTab && matchesSearch;
     });
-  }, [opportunities, activeTab, search]);
+  }, [opportunitiesList, activeTab, search]);
 
   const handleAction = (action, opp) => {
-    if (action === "View Details" && onViewDetails) {
+    if (onViewDetails) {
       onViewDetails(opp);
-    } else {
-      alert("Opening " + action);
     }
   };
 
   return (
     <div className={`min-h-screen ${theme.page}`}>
       <div className={`mx-auto min-h-screen max-w-[1180px] border-x ${theme.inner}`}>
-        <main className="px-5 py-7">
+        <main className="px-6 py-10">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -96,31 +133,31 @@ function MyOpportunities({ onViewDetails, darkMode }) {
             className="flex flex-col justify-between gap-5 md:flex-row md:items-end"
           >
             <div>
-              <p className={`text-[8px] font-semibold uppercase tracking-wider ${theme.primary}`}>
-                Student Workspace 
+              <p className={`text-xs font-semibold uppercase tracking-wider ${theme.primary}`}>
+                Student Workspace
               </p>
-              <h1 className={`mt-1 text-2xl font-semibold ${theme.text}`}>
+              <h1 className={`mt-2 text-3xl font-bold ${theme.text}`}>
                 My Opportunities
               </h1>
-              <p className={`mt-1 text-[9px] ${theme.muted}`}>
+              <p className={`mt-2 text-sm ${theme.muted}`}>
                 Track your registrations, submission milestones, and saved items in one place.
               </p>
             </div>
           </motion.div>
 
-          <div className="mt-6 flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            <div className={`flex w-fit overflow-hidden rounded-lg ${theme.card2}`}>
-              {["Registered"].map((tab) => (
+          <div className="mt-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div className={`flex w-fit overflow-hidden rounded-xl ${theme.card2} shadow-sm`}>
+              {["Registered", "Saved"].map((tab) => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 text-[8px] transition ${
+                  className={`px-6 py-2.5 text-sm font-medium transition ${
                     activeTab === tab
                       ? darkMode
-                        ? "bg-[#202420] text-[#F1F3EF]"
+                        ? "bg-[#303630] text-[#F1F3EF]"
                         : "bg-[#1F4D3F] text-white"
-                      : `${theme.muted}`
+                      : `${theme.muted} hover:text-black dark:hover:text-white`
                   }`}
                 >
                   {tab}
@@ -128,34 +165,31 @@ function MyOpportunities({ onViewDetails, darkMode }) {
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className={`flex items-center gap-2 rounded-lg px-3 py-2 ${theme.card2}`}>
-                <Search size={12} className={theme.muted} />
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-2 rounded-xl px-4 py-2.5 shadow-sm ${theme.card2}`}>
+                <Search size={16} className={theme.muted} />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Filter by name, club..."
-                  className={`w-36 bg-transparent text-[8px] outline-none ${theme.text} ${
+                  className={`w-48 bg-transparent text-sm outline-none ${theme.text} ${
                     darkMode ? "placeholder:text-[#9A9F9A]" : "placeholder:text-[#6B6F6B]"
                   }`}
                 />
               </div>
-              <button type="button" className={`rounded-lg p-2 ${theme.card2} ${theme.muted}`}>
-                <Filter size={12} />
-              </button>
             </div>
           </div>
 
-          <div className="mt-5 space-y-4">
+          <div className="mt-8 space-y-4">
             <AnimatePresence mode="wait">
               {loading ? (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`rounded-xl p-8 text-center ${theme.card}`}
+                  className={`rounded-2xl p-12 text-center ${theme.card}`}
                 >
-                  <p className={`text-xs ${theme.muted}`}>Loading your applications...</p>
+                  <p className={`text-sm font-medium ${theme.muted}`}>Loading your workspace...</p>
                 </motion.div>
               ) : filteredOpportunities.length > 0 ? (
                 filteredOpportunities.map((item) => (
@@ -165,61 +199,67 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className={`rounded-xl border p-4 ${theme.card}`}
+                    className={`rounded-2xl border p-6 shadow-sm ${theme.card}`}
                   >
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                      <div className="flex gap-3">
-                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${theme.card2} ${theme.primary}`}>
+                      <div className="flex gap-4">
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${theme.card2} ${theme.primary}`}>
                           {item.type === "Hackathon" ? (
-                            <Trophy size={14} />
+                            <Trophy size={20} />
                           ) : item.type === "Workshop" ? (
-                            <Users size={14} />
+                            <Users size={20} />
+                          ) : item.status === "Saved" ? (
+                            <Bookmark size={20} />
                           ) : (
-                            <CheckCircle2 size={14} />
+                            <CheckCircle2 size={20} />
                           )}
                         </div>
 
                         <div>
-                          <p className={`text-[8px] ${theme.primary}`}>
+                          <p className={`text-xs font-semibold ${theme.primary}`}>
                             {item.status}
-                            <span className={`mx-1 ${theme.muted}`}>·</span>
+                            <span className={`mx-2 ${theme.muted}`}>�</span>
                             {item.organization}
                           </p>
-                          <h2 className={`mt-1 text-sm font-semibold ${theme.text}`}>
+                          <h2 className={`mt-1 text-lg font-bold ${theme.text}`}>
                             {item.title}
                           </h2>
-                          <div className={`mt-2 flex flex-wrap items-center gap-2 text-[8px] ${theme.muted}`}>
-                            <span className="flex items-center gap-1">
-                              <CalendarDays size={10} />
+                          <div className={`mt-2 flex flex-wrap items-center gap-3 text-xs font-medium ${theme.muted}`}>
+                            <span className="flex items-center gap-1.5">
+                              <CalendarDays size={14} />
                               {item.date}
                             </span>
-                            <span>•</span>
+                            <span>�</span>
                             <span>{item.mode}</span>
                           </div>
                         </div>
                       </div>
 
                       <span
-                        className={`rounded-md px-2 py-1 text-[7px] ${
-                          darkMode ? "bg-[#202420] text-[#9A9F9A]" : "bg-[#E8B84A] text-[#1E1E1C]"
+                        className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${
+                          darkMode ? "bg-[#303630] text-[#9A9F9A]" : "bg-[#E8B84A] text-[#1E1E1C]"
                         }`}
                       >
                         {item.type}
                       </span>
                     </div>
 
-                    <div className={`mt-4 border-t pt-4 ${theme.border}`}>
-                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <div className={`flex items-center gap-2 text-[7px] ${theme.muted}`}>
-                          <Clock3 size={10} />
-                          Application submitted successfully. Under review by organizer.
+                    <div className={`mt-6 border-t pt-5 ${theme.border}`}>
+                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className={`flex items-center gap-2 text-sm font-medium ${theme.muted}`}>
+                          <Clock3 size={16} />
+                          {item.tab === "Registered" 
+                            ? "Application submitted successfully. Under review by organizer."
+                            : "Saved for later. Apply before the deadline."}
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                           <button
                             type="button"
                             onClick={() => handleAction(item.action, item.rawOpportunity)}
-                            className={`rounded-md px-3 py-2 text-[7px] ${
-                              darkMode ? "bg-[#202420] text-[#F1F3EF] hover:bg-[#1F4D3F]" : "bg-[#F5F5F2] text-[#1E1E1C] hover:bg-[#E8B84A]"
+                            className={`rounded-xl px-5 py-2.5 text-sm font-bold shadow-sm transition ${
+                              darkMode 
+                                ? "bg-[#303630] text-[#F1F3EF] hover:bg-[#1F4D3F]" 
+                                : "bg-[#1F4D3F] text-white hover:opacity-90"
                             }`}
                           >
                             {item.action}
@@ -233,10 +273,10 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`rounded-xl p-8 text-center ${theme.card}`}
+                  className={`rounded-2xl border p-12 text-center ${theme.card}`}
                 >
-                  <p className={`text-xs ${theme.muted}`}>
-                    No opportunities found. Head to Explore to apply!
+                  <p className={`text-base font-medium ${theme.muted}`}>
+                    No opportunities found in this section. Head to Explore to find more!
                   </p>
                 </motion.div>
               )}
