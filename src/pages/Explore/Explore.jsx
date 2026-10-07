@@ -123,7 +123,7 @@ function Explore({ onViewDetails }) {
           )}
 
           <div className="min-w-0 flex-1">
-            {/* Loading state */}
+            {}
             {loading && (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
                 <p className="text-sm text-[var(--text-muted)]">
@@ -132,7 +132,7 @@ function Explore({ onViewDetails }) {
               </div>
             )}
 
-            {/* Error state */}
+            {}
             {!loading && error && (
               <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
                 <p className="font-semibold text-red-700">{error}</p>
@@ -146,7 +146,7 @@ function Explore({ onViewDetails }) {
               </div>
             )}
 
-            {/* Empty state */}
+            {}
             {!loading && !error && filteredOpportunities.length === 0 && (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
                 <p className="font-semibold">No opportunities found</p>
@@ -158,14 +158,14 @@ function Explore({ onViewDetails }) {
               </div>
             )}
 
-            {/* Results grid */}
+            {}
             {!loading && !error && filteredOpportunities.length > 0 && (
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {filteredOpportunities.map((item) => (
                   <OpportunityCard
                     key={item._id || item.id}
                     {...item}
-                    // Normalise fields so OpportunityCard receives what it expects
+                    
                     id={item._id || item.id}
                     type={item.category}
                     date={

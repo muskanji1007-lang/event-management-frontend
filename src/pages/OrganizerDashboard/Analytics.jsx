@@ -29,7 +29,6 @@ export default function Analytics() {
     fetchData();
   }, []);
 
-  // Derive stats from real API data
   const totalEvents =
     analytics?.platform_statistics?.total_events ??
     demand?.total_events ??
@@ -90,7 +89,7 @@ export default function Analytics() {
         </button>
       </div>
 
-      {/* Loading */}
+      {}
       {loading && (
         <div className="flex items-center justify-center rounded-2xl bg-[#EEEEEB] p-10">
           <Loader2 className="animate-spin text-[#1F4D3F]" size={30} />
@@ -100,7 +99,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Error */}
+      {}
       {!loading && error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">{error}</p>
@@ -114,7 +113,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Stats grid */}
+      {}
       {!loading && !error && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -130,7 +129,7 @@ export default function Analytics() {
             })}
           </div>
 
-          {/* Event demand breakdown */}
+          {}
           {demand && (
             <div className="rounded-2xl bg-[#EEEEEB] p-5">
               <h2 className="text-lg font-bold">Event Status Breakdown</h2>
@@ -176,7 +175,7 @@ export default function Analytics() {
             </div>
           )}
 
-          {/* Mode distribution */}
+          {}
           {demand?.mode_distribution && (
             <div className="rounded-2xl bg-[#EEEEEB] p-5">
               <h2 className="text-lg font-bold">Mode Distribution</h2>
@@ -200,7 +199,7 @@ export default function Analytics() {
             </div>
           )}
 
-          {/* Pending events count */}
+          {}
           {pendingEvents > 0 && (
             <p className="rounded-lg bg-[#F5E8BF] px-4 py-3 text-sm font-medium text-[#735710]">
               ⚠ {pendingEvents} event{pendingEvents !== 1 ? "s" : ""} pending

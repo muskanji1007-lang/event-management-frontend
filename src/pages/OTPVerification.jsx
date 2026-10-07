@@ -6,7 +6,7 @@ export default function OTPVerification({ onBack, onVerified }) {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   
-  const [step, setStep] = useState(1); // 1 = Enter Email, 2 = Enter OTP & New Password
+  const [step, setStep] = useState(1); 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");

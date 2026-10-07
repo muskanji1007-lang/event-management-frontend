@@ -13,7 +13,7 @@ export default function ManageUsers() {
     setError("");
     try {
       const data = await getAllUsers();
-      // API returns { success, count, users: [...] }
+      
       setUsers(data.users || []);
     } catch (err) {
       setError(err.message || "Unable to load users.");
@@ -77,14 +77,14 @@ export default function ManageUsers() {
         />
       </div>
 
-      {/* Loading */}
+      {}
       {loading && (
         <div className="flex items-center justify-center rounded-2xl bg-[#EEEEEB] p-10">
           <Loader2 className="animate-spin text-[#1F4D3F]" size={30} />
         </div>
       )}
 
-      {/* Error */}
+      {}
       {!loading && error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">{error}</p>
@@ -98,7 +98,7 @@ export default function ManageUsers() {
         </div>
       )}
 
-      {/* Table */}
+      {}
       {!loading && !error && (
         <div className="overflow-x-auto rounded-2xl bg-[#EEEEEB]">
           <table className="w-full min-w-[500px] text-left text-sm">

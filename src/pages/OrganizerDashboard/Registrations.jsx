@@ -83,7 +83,7 @@ export default function Registrations() {
         </button>
       </div>
 
-      {/* Summary cards */}
+      {}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className={cardClass}>
           <Users className="mb-3 text-[#1F4D3F]" size={26} />
@@ -102,14 +102,14 @@ export default function Registrations() {
         </div>
       </div>
 
-      {/* Loading state */}
+      {}
       {loading && (
         <div className={`${cardClass} flex items-center justify-center py-10`}>
           <Loader2 className="animate-spin text-[#1F4D3F]" size={30} />
         </div>
       )}
 
-      {/* Error state */}
+      {}
       {!loading && error && (
         <div
           role="alert"
@@ -127,7 +127,7 @@ export default function Registrations() {
         </div>
       )}
 
-      {/* Events table */}
+      {}
       {!loading && !error && events.length > 0 && (
         <div className="overflow-hidden rounded-2xl border border-[#D9DCD6]">
           <div className="border-b border-[#D9DCD6] p-5">
@@ -204,7 +204,7 @@ export default function Registrations() {
         </div>
       )}
 
-      {/* Empty state */}
+      {}
       {!loading && !error && events.length === 0 && (
         <div className={`${cardClass} py-10 text-center`}>
           <CalendarDays size={36} className="mx-auto mb-3 text-[#1F4D3F]" />

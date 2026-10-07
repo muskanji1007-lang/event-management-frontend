@@ -19,6 +19,5 @@ return ( <div className="inline-flex items-center gap-3 rounded-xl border border
   </div>
 </div>
 
-
 );
 }

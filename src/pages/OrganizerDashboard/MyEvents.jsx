@@ -63,14 +63,14 @@ export default function MyEvents() {
         </button>
       </div>
 
-      {/* Loading */}
+      {}
       {loading && (
         <div className="flex items-center justify-center rounded-2xl bg-[#EEEEEB] p-10">
           <Loader2 className="animate-spin text-[#1F4D3F]" size={30} />
         </div>
       )}
 
-      {/* Error */}
+      {}
       {!loading && error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">Unable to load events</p>
@@ -85,7 +85,7 @@ export default function MyEvents() {
         </div>
       )}
 
-      {/* Empty state */}
+      {}
       {!loading && !error && events.length === 0 && (
         <div className="rounded-2xl bg-[#EEEEEB] p-8 text-center">
           <CalendarDays className="mx-auto mb-3" size={32} />
@@ -96,7 +96,7 @@ export default function MyEvents() {
         </div>
       )}
 
-      {/* Event cards */}
+      {}
       {!loading && !error && events.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2">
           {events.map((event) => {

@@ -62,10 +62,9 @@ export default function EventApprovals({ darkMode = false }) {
       try {
         await updateOpportunity(eventId, updatedData);
       } catch (backendError) {
-        // Handled in api.js now
+        
       }
-      
-      // Update local state (safe matching of _id vs id)
+
       setEvents((current) =>
         current.map((e) =>
           (e._id === eventId || e.id === eventId) ? { ...e, status: newStatus } : e
@@ -175,7 +174,7 @@ export default function EventApprovals({ darkMode = false }) {
                         </button>
                       </div>
                       
-                      {/* AI Risk Assessment Button */}
+                      {}
                       {!riskScores[event._id || event.id] ? (
                         <button
                           type="button"
@@ -213,8 +212,4 @@ export default function EventApprovals({ darkMode = false }) {
     </div>
   );
 }
-
-
-
-
 

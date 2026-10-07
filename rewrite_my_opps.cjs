@@ -1,4 +1,6 @@
-import { useMemo, useState, useEffect } from "react";
+const fs = require('fs');
+
+const code = `import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays,
@@ -59,7 +61,8 @@ function MyOpportunities({ onViewDetails, darkMode }) {
 
   const opportunitiesList = useMemo(() => {
     const list = [];
-
+    
+    // Process Registered
     applications.forEach(app => {
       if (app.opportunity) {
         list.push({
@@ -77,8 +80,9 @@ function MyOpportunities({ onViewDetails, darkMode }) {
       }
     });
 
+    // Process Saved
     savedIds.forEach(savedId => {
-      
+      // Don't duplicate if already in registered
       if (!list.some(item => item.tab === "Registered" && (item.rawOpportunity._id === savedId || item.rawOpportunity.id === savedId))) {
         const opp = allOpps.find(o => (o._id || o.id) === savedId);
         if (opp) {
@@ -121,8 +125,8 @@ function MyOpportunities({ onViewDetails, darkMode }) {
   };
 
   return (
-    <div className={`min-h-screen ${theme.page}`}>
-      <div className={`mx-auto min-h-screen max-w-[1180px] border-x ${theme.inner}`}>
+    <div className={\`min-h-screen \${theme.page}\`}>
+      <div className={\`mx-auto min-h-screen max-w-[1180px] border-x \${theme.inner}\`}>
         <main className="px-6 py-10">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -131,32 +135,32 @@ function MyOpportunities({ onViewDetails, darkMode }) {
             className="flex flex-col justify-between gap-5 md:flex-row md:items-end"
           >
             <div>
-              <p className={`text-xs font-semibold uppercase tracking-wider ${theme.primary}`}>
+              <p className={\`text-xs font-semibold uppercase tracking-wider \${theme.primary}\`}>
                 Student Workspace
               </p>
-              <h1 className={`mt-2 text-3xl font-bold ${theme.text}`}>
+              <h1 className={\`mt-2 text-3xl font-bold \${theme.text}\`}>
                 My Opportunities
               </h1>
-              <p className={`mt-2 text-sm ${theme.muted}`}>
+              <p className={\`mt-2 text-sm \${theme.muted}\`}>
                 Track your registrations, submission milestones, and saved items in one place.
               </p>
             </div>
           </motion.div>
 
           <div className="mt-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div className={`flex w-fit overflow-hidden rounded-xl ${theme.card2} shadow-sm`}>
+            <div className={\`flex w-fit overflow-hidden rounded-xl \${theme.card2} shadow-sm\`}>
               {["Registered", "Saved"].map((tab) => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2.5 text-sm font-medium transition ${
+                  className={\`px-6 py-2.5 text-sm font-medium transition \${
                     activeTab === tab
                       ? darkMode
                         ? "bg-[#303630] text-[#F1F3EF]"
                         : "bg-[#1F4D3F] text-white"
-                      : `${theme.muted} hover:text-black dark:hover:text-white`
-                  }`}
+                      : \`\${theme.muted} hover:text-black dark:hover:text-white\`
+                  }\`}
                 >
                   {tab}
                 </button>
@@ -164,16 +168,16 @@ function MyOpportunities({ onViewDetails, darkMode }) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className={`flex items-center gap-2 rounded-xl px-4 py-2.5 shadow-sm ${theme.card2}`}>
+              <div className={\`flex items-center gap-2 rounded-xl px-4 py-2.5 shadow-sm \${theme.card2}\`}>
                 <Search size={16} className={theme.muted} />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Filter by name, club..."
-                  className={`w-48 bg-transparent text-sm outline-none ${theme.text} ${
+                  className={\`w-48 bg-transparent text-sm outline-none \${theme.text} \${
                     darkMode ? "placeholder:text-[#9A9F9A]" : "placeholder:text-[#6B6F6B]"
-                  }`}
+                  }\`}
                 />
               </div>
             </div>
@@ -185,9 +189,9 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`rounded-2xl p-12 text-center ${theme.card}`}
+                  className={\`rounded-2xl p-12 text-center \${theme.card}\`}
                 >
-                  <p className={`text-sm font-medium ${theme.muted}`}>Loading your workspace...</p>
+                  <p className={\`text-sm font-medium \${theme.muted}\`}>Loading your workspace...</p>
                 </motion.div>
               ) : filteredOpportunities.length > 0 ? (
                 filteredOpportunities.map((item) => (
@@ -197,11 +201,11 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className={`rounded-2xl border p-6 shadow-sm ${theme.card}`}
+                    className={\`rounded-2xl border p-6 shadow-sm \${theme.card}\`}
                   >
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                       <div className="flex gap-4">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${theme.card2} ${theme.primary}`}>
+                        <div className={\`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl \${theme.card2} \${theme.primary}\`}>
                           {item.type === "Hackathon" ? (
                             <Trophy size={20} />
                           ) : item.type === "Workshop" ? (
@@ -214,37 +218,37 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                         </div>
 
                         <div>
-                          <p className={`text-xs font-semibold ${theme.primary}`}>
+                          <p className={\`text-xs font-semibold \${theme.primary}\`}>
                             {item.status}
-                            <span className={`mx-2 ${theme.muted}`}>ï¿½</span>
+                            <span className={\`mx-2 \${theme.muted}\`}>•</span>
                             {item.organization}
                           </p>
-                          <h2 className={`mt-1 text-lg font-bold ${theme.text}`}>
+                          <h2 className={\`mt-1 text-lg font-bold \${theme.text}\`}>
                             {item.title}
                           </h2>
-                          <div className={`mt-2 flex flex-wrap items-center gap-3 text-xs font-medium ${theme.muted}`}>
+                          <div className={\`mt-2 flex flex-wrap items-center gap-3 text-xs font-medium \${theme.muted}\`}>
                             <span className="flex items-center gap-1.5">
                               <CalendarDays size={14} />
                               {item.date}
                             </span>
-                            <span>ï¿½</span>
+                            <span>•</span>
                             <span>{item.mode}</span>
                           </div>
                         </div>
                       </div>
 
                       <span
-                        className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${
+                        className={\`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider \${
                           darkMode ? "bg-[#303630] text-[#9A9F9A]" : "bg-[#E8B84A] text-[#1E1E1C]"
-                        }`}
+                        }\`}
                       >
                         {item.type}
                       </span>
                     </div>
 
-                    <div className={`mt-6 border-t pt-5 ${theme.border}`}>
+                    <div className={\`mt-6 border-t pt-5 \${theme.border}\`}>
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <div className={`flex items-center gap-2 text-sm font-medium ${theme.muted}`}>
+                        <div className={\`flex items-center gap-2 text-sm font-medium \${theme.muted}\`}>
                           <Clock3 size={16} />
                           {item.tab === "Registered" 
                             ? "Application submitted successfully. Under review by organizer."
@@ -254,11 +258,11 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                           <button
                             type="button"
                             onClick={() => handleAction(item.action, item.rawOpportunity)}
-                            className={`rounded-xl px-5 py-2.5 text-sm font-bold shadow-sm transition ${
+                            className={\`rounded-xl px-5 py-2.5 text-sm font-bold shadow-sm transition \${
                               darkMode 
                                 ? "bg-[#303630] text-[#F1F3EF] hover:bg-[#1F4D3F]" 
                                 : "bg-[#1F4D3F] text-white hover:opacity-90"
-                            }`}
+                            }\`}
                           >
                             {item.action}
                           </button>
@@ -271,9 +275,9 @@ function MyOpportunities({ onViewDetails, darkMode }) {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`rounded-2xl border p-12 text-center ${theme.card}`}
+                  className={\`rounded-2xl border p-12 text-center \${theme.card}\`}
                 >
-                  <p className={`text-base font-medium ${theme.muted}`}>
+                  <p className={\`text-base font-medium \${theme.muted}\`}>
                     No opportunities found in this section. Head to Explore to find more!
                   </p>
                 </motion.div>
@@ -287,3 +291,6 @@ function MyOpportunities({ onViewDetails, darkMode }) {
 }
 
 export default MyOpportunities;
+`;
+
+fs.writeFileSync('src/pages/Profile/MyOpportunities.jsx', code);

@@ -6,8 +6,7 @@ export default function OrganizerProfile({ darkMode }) {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  // Password State
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passLoading, setPassLoading] = useState(false);
@@ -66,7 +65,7 @@ export default function OrganizerProfile({ darkMode }) {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       
-      {/* HEADER SECTION */}
+      {}
       <div 
         className="relative overflow-hidden rounded-3xl p-8 shadow-sm"
         style={{ background: bg, border: `1px solid ${border}` }}
@@ -89,9 +88,9 @@ export default function OrganizerProfile({ darkMode }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* LEFT COLUMN */}
+        {}
         <div className="space-y-6">
-          {/* PERSONAL INFO */}
+          {}
           <section className="rounded-3xl p-6 shadow-sm" style={{ background: bg, border: `1px solid ${border}` }}>
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold" style={{ color: text }}>
               <UserRound size={20} className="text-[#1F4D3F]" />
@@ -118,7 +117,7 @@ export default function OrganizerProfile({ darkMode }) {
             </div>
           </section>
 
-          {/* ORGANIZER STATS */}
+          {}
           <section className="rounded-3xl p-6 shadow-sm" style={{ background: bg, border: `1px solid ${border}` }}>
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold" style={{ color: text }}>
               <BarChart2 size={20} className="text-[#1F4D3F]" />
@@ -141,9 +140,9 @@ export default function OrganizerProfile({ darkMode }) {
           </section>
         </div>
 
-        {/* RIGHT COLUMN */}
+        {}
         <div className="space-y-6">
-          {/* SECURITY / CHANGE PASSWORD */}
+          {}
           <section className="rounded-3xl p-6 shadow-sm" style={{ background: bg, border: `1px solid ${border}` }}>
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold" style={{ color: text }}>
               <KeyRound size={20} className="text-[#1F4D3F]" />

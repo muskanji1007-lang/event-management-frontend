@@ -85,7 +85,6 @@ function Navbar({
           </span>
         </button>
 
-        
         <div className="hidden items-center gap-5 md:flex">
           {links.map((link) => (
             <button
@@ -99,7 +98,6 @@ function Navbar({
           ))}
         </div>
 
-      
         <div className="hidden items-center gap-2 md:flex">
 
           <ThemeToggle
@@ -136,7 +134,6 @@ function Navbar({
           </button>
         </div>
 
-        
         <div className="flex items-center gap-2 md:hidden">
 
           <ThemeToggle
@@ -153,7 +150,6 @@ function Navbar({
           </button>
         </div>
       </nav>
-
 
       {mobileOpen && (
         <div className="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-4 md:hidden">

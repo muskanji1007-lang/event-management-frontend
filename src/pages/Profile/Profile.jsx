@@ -247,7 +247,7 @@ function Profile({ onExplore }) {
                 )}
               </div>
 
-              {/* Add skill input */}
+              {}
               <div className="mt-4 flex flex-wrap gap-2">
                 <input
                   type="text"
@@ -277,7 +277,7 @@ function Profile({ onExplore }) {
               )}
             </section>
 
-            {/* Saved opportunities shortcut */}
+            {}
             <section className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--highlight)]/25">
@@ -301,7 +301,7 @@ function Profile({ onExplore }) {
               </button>
             </section>
 
-            {/* Account stats */}
+            {}
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
               <h3 className="font-semibold">Account Info</h3>
               <dl className="mt-4 space-y-2 text-sm">

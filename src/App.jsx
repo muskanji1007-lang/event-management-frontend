@@ -22,7 +22,6 @@ import Analytics from "./pages/OrganizerDashboard/Analytics";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import RoleSelection from "./pages/RoleSelection";
 
-
 function getRoleFromUser(userObj) {
   if (!userObj) return null;
   const role = (userObj.role || "").toUpperCase();
@@ -35,7 +34,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authPage, setAuthPage] = useState("login");
 
-  // If selectedRole is null, we show RoleSelection
   const [selectedRole, setSelectedRole] = useState(null);
 
   const [darkMode, setDarkMode] = useState(false);
@@ -43,7 +41,6 @@ function App() {
 
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
-  // Restore session on page load
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("user");
@@ -63,7 +60,7 @@ function App() {
           );
         }
       } catch {
-        // Corrupt storage — clear it
+        
         localStorage.clear();
       }
     }
@@ -158,11 +155,10 @@ function App() {
     return <RoleSelection onSelect={handleRoleSelect} />;
   }
 
-
   return (
     <div className="min-h-screen">
 
-      {/* USER NAVBAR */}
+      {}
       {selectedRole === "user" && (
         <Navbar
           darkMode={darkMode}
@@ -206,7 +202,7 @@ function App() {
         <MyOpportunities onExplore={goExplore} darkMode={darkMode} />
       )}
 
-      {/* ORGANIZER PAGES */}
+      {}
       {selectedRole === "organizer" && page === "organizer" && (
         <OrganizerDashboard
           darkMode={darkMode}
@@ -264,7 +260,7 @@ function App() {
         </div>
       )}
 
-      {/* ADMIN PAGE */}
+      {}
       {selectedRole === "admin" && page === "admin" && (
         <AdminDashboard
           darkMode={darkMode}

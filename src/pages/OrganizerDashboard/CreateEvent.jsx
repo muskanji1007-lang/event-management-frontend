@@ -65,15 +65,12 @@ export default function CreateEvent() {
       setMessage("Registration deadline cannot be after the event date.");
       return;
     }
-    
-
 
 if (form.maxParticipants && Number(form.maxParticipants) < 1) {
   setIsError(true);
   setMessage("Maximum participants must be at least 1.");
   return;
 }
-
 
     setIsSubmitting(true);
 
@@ -360,7 +357,4 @@ if (form.maxParticipants && Number(form.maxParticipants) < 1) {
     </div>
   );
 }
-
-
-
 

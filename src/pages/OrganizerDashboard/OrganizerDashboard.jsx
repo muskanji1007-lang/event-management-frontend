@@ -328,4 +328,3 @@ export default function OrganizerDashboard({ darkMode, onChangeRole }) {
   );
 }
 
-

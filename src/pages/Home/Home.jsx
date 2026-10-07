@@ -35,7 +35,6 @@ function Home({ onExplore, onMyOpportunities, darkMode = false }) {
     border: darkMode ? "border-[#303630]" : "border-[#DADAD4]",
   };
 
-  // Load recommendations from the ML API
   useEffect(() => {
     let cancelled = false;
 
@@ -256,7 +255,6 @@ function Home({ onExplore, onMyOpportunities, darkMode = false }) {
           </div>
         </div>
 
-  
         <div className="relative z-10 mx-auto mt-5 max-w-3xl px-2">
           <div
             className={`flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm ${theme.card}`}
@@ -369,7 +367,7 @@ function Home({ onExplore, onMyOpportunities, darkMode = false }) {
         </div>
       </section>
 
-      {/* FEATURED OPPORTUNITIES */}
+      {}
       <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
         <div className="mb-5 flex items-end justify-between">
           <div>
@@ -454,7 +452,6 @@ function Home({ onExplore, onMyOpportunities, darkMode = false }) {
         </div>
       </section>
 
-    
       <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
         <div className="mb-5 flex items-end justify-between">
           <div>

@@ -3,9 +3,8 @@ import logo from "../../../assets/opportunity-logo.jpeg";
 import { signupUser, sendOTP, verifyOTP } from "../../../services/api";
 
 function Signup({ onLogin, onSignup }) {
-  const [step, setStep] = useState(1); // 1 = Details, 2 = OTP
+  const [step, setStep] = useState(1); 
 
-  // Form state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,10 +63,8 @@ function Signup({ onLogin, onSignup }) {
     try {
       setLoading(true);
 
-      // 1. Verify OTP
       await verifyOTP(email.trim().toLowerCase(), otp.trim());
 
-      // 2. Proceed with Signup
       const signupData = await signupUser({
         name: name.trim(),
         email: email.trim().toLowerCase(),

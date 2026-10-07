@@ -140,7 +140,6 @@ function FilterSidebar({ darkMode }) {
         </div>
       </div>
 
-      
       <div>
 
         <p className={`mb-3 text-[10px] font-semibold uppercase ${muted}`}>
@@ -175,7 +174,6 @@ function FilterSidebar({ darkMode }) {
         </div>
       </div>
 
-    
       <div className="mt-5 flex gap-2">
 
         <button
