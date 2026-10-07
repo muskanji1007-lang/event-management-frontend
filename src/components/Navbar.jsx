@@ -1,3 +1,4 @@
+import logo from "../assets/opportunity-logo.jpeg";
 import { Bell, User, Menu, X, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
@@ -74,7 +75,7 @@ function Navbar({
         >
           <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-[var(--primary)]">
             <img
-              src="/opportunity-logo.jpeg"
+              src={logo}
               alt="Opportunity Hub"
               className="h-full w-full object-contain"
             />
